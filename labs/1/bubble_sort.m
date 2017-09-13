@@ -1,4 +1,4 @@
-function [ X ] = bubble_sort( X, comp )
+function [ X, I ] = bubble_sort( X, comp )
 %BUBBLE_SORT sort into ascending order in n^2 time complexity
 %
 %   Sort by comparing and swapping neighbours until they are in order,
@@ -11,28 +11,21 @@ function [ X ] = bubble_sort( X, comp )
 %   which returns false if the values are not in the desired order. It must
 %   accept two arguments x from xs.  The default function is:
 %
-%      comp = @(x,y) x > y
+%      comp = @(x,y) x(1) > y(1)
 %
-%   See also SELECT_SORT
+%   [X, I] = BUBBLE_SORT(A) returns the sorted elements X and and sort
+%   indecies I where
+%   - If A is a vector, then B = A(I).  
+%   - If A is an m-by-n matrix, then B = A(I,:)
+%
+%   See also SELECT_SORT, SORT
 
 % Handle variadic arguments
 
-if nargin < 2, comp = @(x,y) x > y; end
+if nargin < 2, comp = @(x,y) x(1) > y(1); end
 
-if isvector(X)
-    % Bubble sort the vector
-    X=bubble(X,comp);
-else
-    % Bubble sort each row of the matrix
-    for row=1:size(X,1), X(row,:)=bubble(X(row,:),comp); end
-end
-
-end
-
-function [ xs ] = bubble(xs,comp)
-% Perform the actual sort
-
-n=numel(xs);
+if isvector(X), I=1:numel(X); else I=1:size(X,1); end
+n=numel(I);
 
 swap = true;
 while swap
@@ -42,7 +35,11 @@ while swap
     for i = 2:n
         % Swap elements futher down the list until that element is in the
         % proper order
-        if comp(xs(i-1),xs(i)), xs([i i-1]) = xs([i-1 i]); swap = true; end
+        if comp(X(i-1,:), X(i,:))
+            X([i i-1],:) = X([i-1 i],:);
+            I([i i-1]) = I([i-1 i]);
+            swap = true; 
+        end
     end
     n=n-1;
 end
