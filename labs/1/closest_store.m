@@ -42,3 +42,17 @@ fprintf('The closest store locations are:\n');
 for t=1:numel(T)
     fprintf('\t%d: %s\t%f miles\n',I(t),T{I(t)},havdist(L(t,:),D,3959));
 end
+
+
+%% Test sort functions
+
+test = rand(25,1);
+
+BubbleSort = bubble_sort(test);
+SelectSort = select_sort(test);
+E = sort(test);
+fprintf('\n\n\nrand(25,1), bubble_sort, select_sort, sort');
+[ test BubbleSort SelectSort E ]
+
+fprintf('all(select_sort(test) == sort(test)) >> %i\n', all(E==SelectSort));
+fprintf('all(bubble_sort(test) == sort(test)) >> %i\n', all(E==BubbleSort));
