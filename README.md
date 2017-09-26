@@ -4,11 +4,11 @@
 
 This repository hosts my files from labs, homework, class, and more.
 
-• **Part I** - Introduction to Algorithm Design and Analysis
-• **Part II** - Random Processes
-• **Part III** - Graph Theory
-• **Part IV** - Data Mining & Clustering
-• **Part V** - Optimization (Linear and dynamic programming)
-• **Part VI** - Feature Extraction and Pattern Recognition
-• **Part VII** - Computational Geometry
+- **Part I** - Introduction to Algorithm Design and Analysis
+- **Part II** - Random Processes
+- **Part III** - Graph Theory
+- **Part IV** - Data Mining & Clustering
+- **Part V** - Optimization (Linear and dynamic programming)
+- **Part VI** - Feature Extraction and Pattern Recognition
+- **Part VII** - Computational Geometry
 
