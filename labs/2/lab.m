@@ -7,8 +7,9 @@
 % 1-4 we map these values to character values.  Since MATLAB has extremely
 % flexible indexing rules, if we have a character vector with all of the
 % possible characters, we can just provide a matrix of any size, as long as
-% it's values are all $$x[1,4]$$ then it will simply treat them as indecies
-% and build a matrix with the indexed values in place of the indecies.
+% it's values are all $x_i\epsilon[1,4]$ then it will simply treat them as
+% indecies and build a matrix with the indexed values in place of the
+% indecies.
 %
 %   a = 'acgt';
 %   a(randi(numel(a), 10, 1)) % index into `a` with random integers
