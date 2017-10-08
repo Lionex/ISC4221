@@ -1,3 +1,4 @@
 *.tar*
 
+hw/**/html
 labs/**/html
