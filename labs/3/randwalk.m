@@ -22,6 +22,9 @@ function [ W ] = randwalk( I, D, S )
 %
 %       @(w) or(w'<=D(:,1), w'>=D(:,2))
 %
+%   Note that use of integral step-sizes is preferable to non-integral
+%   step-sizes.
+%
 %   RANDWALK(I, D, S) takes axis-aligned steps of lenght S
 %
 %   W = RANDWALK(...) produces matrix W where each row is a step in the
@@ -62,6 +65,7 @@ if nargin < 3, S = 1; end
 %% Random walk
 
 % Define a function which determines which direction to move along the axis
+% in a random way
 S = [-S S];
 move = @() S(randi([1 2],1));
 
@@ -69,7 +73,7 @@ move = @() S(randi([1 2],1));
 W = I;
 
 % Calculate random walk
-while ~any(stop(W(end,:)))
+while ~any(stop(W(end,:))) % Test last row of W
     % Pre-initialize v
     v = zeros(size(I));
 
