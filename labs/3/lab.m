@@ -22,7 +22,7 @@ f = @(x) abs(cos(pi.*x));
 f2 = @(x) cos(x) + 2*cos(2*x) + 5*cos(4.5*x) + 7*cos(9*x);
 f3 = @(x) -sech(10*(x-2)).^2 - sech(100*(x-4)).^2 - sech(1000*(x-6)).^2;
 
-figure 1;
+figure(1);
 xs = linspace(0,1,1000);
 ys = f(xs);
 subplot(3,1,1), plot(xs,ys,'r');
@@ -65,7 +65,7 @@ m = arrayfun(@(n)mcmin(f,n),repmat(n,1,runs)); % perform mcmin on n samples
 avgerr = mean(abs(0.5-m),2);
 avg = mean(m,2);
 
-figure 2;
+figure(2);
 loglog(n,avgerr,'r',n,abs(0.5-m),'k.');
 title('Monte Carlo |cos(\pi x)|');
 ylabel('error_{abs}');
