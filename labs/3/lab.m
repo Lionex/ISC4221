@@ -83,4 +83,50 @@ fprintf('        samples   | mean optima | mean error\n')
 fprintf('        ----------|-------------|-----------\n')
 fprintf('        %8i  |  %1.7g\t | %1.7g\n',[n mean(m,2) avgerr]')
 
-%% 
+%%
+% We can modify the monte carlo optimization algorithm to perform less
+% function evaluations by zooming and sampling smaller subsets of the
+% domain around the local minima we find.
+%
+% Plotting absolute error against the sample size and number of zooms for
+% $f_1$ and $f_2$ we have:
+
+% Create a grid of zoom and sample sizes
+zoom = 10; samples=10;
+clear ns zs;
+[ns, zs] = meshgrid(25*(2.^(0:samples))',0:zoom);
+
+% Define function and it's minimum
+f2 = @(x) cos(x) + 2*cos(2*x) + 5*cos(4.5*x) + 7*cos(9*x);
+f2_min = mcmin(f2,2,7,10^6);
+% mczoom for every combination of zoom and sample size
+m = arrayfun(@(n,z)mczoom(f2,2,7,n,z),ns,zs);
+
+figure(3);
+plot3(ns,zs,abs(f2_min-m))
+title('f_2 adaptive zoom MC');
+xlabel('sample size');
+ylabel('zoom level');
+zlabel('absolute error');
+set(gca, 'XScale', 'log', 'YScale', 'linear', 'ZScale', 'log');
+
+% Define function and it's minimum
+f3 = @(x) -sech(10*(x-2)).^2 - sech(100*(x-4)).^2 - sech(1000*(x-6)).^2;
+f3_min = mcmin(f3,10^6);
+% mczoom for every combination of zoom and sample size
+m = arrayfun(@(n,z)mczoom(f3,n,z),ns,zs);
+
+figure(4);
+plot3(ns,zs,abs(f3_min-m));
+title('f_3 adaptive zoom MC');
+xlabel('sample size');
+ylabel('zoom level');
+zlabel('absolute error');
+set(gca, 'XScale', 'log', 'YScale', 'linear', 'ZScale', 'log');
+
+%%
+% Inspecting the plots shows that for $f_2$ the benefit of using the
+% adaptive zoom is difficult to asses, but for $f_3$ there is noticeable
+% benefit.  This likely arises from the fact that $f_3$ has a minimum near
+% it's boundaries, and the adaptive zoom method essentially performs like a
+% bisection search for the minimum, closing in on $x=1$.
