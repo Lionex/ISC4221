@@ -43,12 +43,14 @@ legend('f_3');
 % From the plots we can visually estimate the global minima:
 %
 % $$
-% \begin{tabular}{c|c}
+% \begin{tabular}{|c|c|}
+%   \hline
 %   function & $x_{min}$ \\
 %   \hline
 %   $f_1$ & $0.5$ \\
 %   $f_2$ & $4.6$ \\
 %   $f_3$ & $1$   \\
+%   \hline
 % \end{tabular}
 % $$
 %%
@@ -58,12 +60,15 @@ legend('f_3');
 
 runs = 10; % determine number of runs to perform
 
-f = @(x) abs(cos(pi.*x)); % Define function to test minimization on
-n = 25*(2.^(0:6))'; % create a range of sample sizes
-m = arrayfun(@(n)mcmin(f,n),repmat(n,1,runs)); % perform mcmin on n samples
+% define necessary quantities and perform mcmin multiple times over a range
+% of sample sizes
 
-avgerr = mean(abs(0.5-m),2);
-avg = mean(m,2);
+f = @(x) abs(cos(pi.*x)); % define function to test minimization on
+n = 25*(2.^(0:6))'; % create range of sample sizes
+m = arrayfun(@(n)mcmin(f,n),repmat(n,1,runs)); % repeat mcmin `runs` times
+
+avgerr = mean(abs(0.5-m),2); % compute mean absolute error
+avg = mean(m,2); % compute the mean minimum value
 
 figure(2);
 loglog(n,avgerr,'r',n,abs(0.5-m),'k.');
