@@ -130,3 +130,30 @@ set(gca, 'XScale', 'log', 'YScale', 'linear', 'ZScale', 'log');
 % benefit.  This likely arises from the fact that $f_3$ has a minimum near
 % it's boundaries, and the adaptive zoom method essentially performs like a
 % bisection search for the minimum, closing in on $x=1$.
+
+%% Random Walks & Laplace's Equation
+% Using random walks, we can average random solutions to converge on the
+% real solution to Laplace's equation.  First let's examine a few random
+% walks on the domain $[0,1]x[0,1]$ with a grid size of $s=0.1$ starting at
+% random interior nodes.
+
+% Generate random start positions on the grid
+n = 4; % Number of random walks
+I = randi([1 9], n, 2);
+
+% Perform random walk for each pair of start conditions
+%
+% Use integers and then transform later to prevent issues with numerical
+% precision and the ordinal operators used in the stop function of randwalk
+W = arrayfun(@(x,y) randwalk([x y],[0 10; 0 10])./10, I(:,1), I(:,2), ...
+    'UniformOutput',false);
+
+% Plot all random walks
+figure(5)
+hold on;
+arrayfun(@(i)plot(W{i}(:,1),W{i}(:,2),'.-'),1:size(I,1))
+hold off;
+legend(arrayfun(@(x,y) sprintf('(%g,%g)',x,y), I(:,1)./10, I(:,2)./10, ...
+    'UniformOutput',false),'Location','northeastoutside')
+title(sprintf('%i Random Walks', size(I,1)))
+xlim([0,1]); ylim([0,1]);
