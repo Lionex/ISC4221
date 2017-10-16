@@ -18,25 +18,28 @@
 %
 
 % Define functions
-f = @(x) abs(cos(pi.*x));
+f1 = @(x) abs(cos(pi.*x));
 f2 = @(x) cos(x) + 2*cos(2*x) + 5*cos(4.5*x) + 7*cos(9*x);
 f3 = @(x) -sech(10*(x-2)).^2 - sech(100*(x-4)).^2 - sech(1000*(x-6)).^2;
 
 figure(1);
 xs = linspace(0,1,1000);
-ys = f(xs);
-subplot(3,1,1), plot(xs,ys,'r');
+ys = f1(xs);
+[y, x] = min(ys);
+subplot(3,1,1), plot(xs,ys,'r',xs(x),y,'ro');
 title('Functions over their domains');
 legend('f_1');
 
 xs = linspace(2,7,1000);
 ys = f2(xs);
-subplot(3,1,2), plot(xs,ys,'b');
+[y, x] = min(ys);
+subplot(3,1,2), plot(xs,ys,'b',xs(x),y,'bo');
 legend('f_2');
 
 xs = linspace(0,1,1000);
 ys = f3(xs);
-subplot(3,1,3), plot(xs,ys,'m');
+[y, x] = min(ys);
+subplot(3,1,3), plot(xs,ys,'m',xs(x),y,'mo');
 legend('f_3');
 
 %%
