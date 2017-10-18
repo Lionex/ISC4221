@@ -50,13 +50,25 @@ function [ W ] = randwalk( I, D, S )
 %       W = RANDWALK([0,0,0]);
 %       plot3(W(:,1),W(:,2),W(:,3));
 %
+%   Perform a random walk with a custom stop function based upon the
+%   manhattan distance from a point.
+%
+%       stop = @(w) sum(abs(w)) >= 10;
+%       W = RANDWALK([0 0], stop, 0.1)
+%
 %   See also RAND, RANDI, RANDN, RNG, PLOT, PLOT3
 
 %% Handle variadic arguments
-if nargin < 1, I = [0 0]; end
-if nargin < 2, D = 10; end % Build D matrix from Scalar value
-if isscalar(D), D=repmat([-abs(D) abs(D)],[numel(I) 1]); end
-if ismatrix(D) % Define stop function if one isn't user defined
+if nargin < 1, I = [0 0]; end % Default start point
+if nargin < 2, D = 10; end % Default boundary
+if nargin < 3, S = 1; end % Default step size
+
+if isa(D,'function_handle')
+    stop=D;  % Define stop as user defined function
+elseif isscalar(D)
+    D=repmat([-abs(D) abs(D)],[numel(I) 1]); % Convert scalar D to matrix
+end
+if exist('stop','var') == 0 % Define stop function if not provided
     if size(D,1) ~= numel(I)
         error('Mismatched domain and initial point size');
     end
@@ -66,7 +78,6 @@ if ismatrix(D) % Define stop function if one isn't user defined
     % step sizes.
     stop = @(w) or(w'<=D(:,1)+0.1*S, w'>=D(:,2)-0.1*S);
 end
-if nargin < 3, S = 1; end
 
 %% Random walk
 
