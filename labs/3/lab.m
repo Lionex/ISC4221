@@ -178,12 +178,13 @@ E = exp(X).*cos(Y); % exact solution for each interior node
 M = zeros([size(X) numel(n)]);
 for i=1:numel(n)
     L = zeros([size(X) n(i)]);
+    % Run the random walk n(i) times
     for j=1:n(i)
         L(:,:,j) = arrayfun(...
             @(x,y) last( randwalk([x y], [0 1; 0 1], 0.1) ), ...
             X, Y);
     end
-    M(:,:,i) = mean(L,3) - E;
+    M(:,:,i) = mean(L,3) - E; % Accumulate the mean and calculate error
 end
 
 %%
@@ -203,7 +204,48 @@ for p=1:4
 end
 
 figure(7);
-semilogy(n, arrayfun(@(i)norm(M(:,:,i))./n(i),1:numel(n)));
+semilogy(n, arrayfun(@(i)norm(M(:,:,i),2)./n(i),1:numel(n)));
 title('L_2 norm vs N Walks');
 xlabel('N_{walks}');
+ylabel('L_2 norm of \epsilon_{abs}');
+
+%% Varying the Step Size of Random Walks
+% Now we vary step size $S$ to observe how the norm changes with changing
+% step sizes given a consistent number of random walks.
+clear M;
+
+s = 1./(2.^(1:6)); % define range of step sizes
+
+M = zeros([size(X) numel(s)]);
+for i=1:numel(s)
+    L = zeros([size(X) 100]);
+    % Run the walk 100 times with stepsize s(i)
+    for j=1:100
+        L(:,:,j) = arrayfun(...
+            @(x,y) last( randwalk([x y], [0 1; 0 1], s(i)) ), ...
+            X, Y);
+    end
+    M(:,:,i) = mean(L,3) - E; % Accumulate the mean and calculate error
+end
+
+%%
+% We can plot the error over the interior nodes for each step size to see
+% how step size influences the results for 100 random walks, and plot the
+% L2 norm of the error versus the step size to see how our approximation
+% generally performs over step sizes.
+
+upper = round(max(max(max(M))),1); % find and round upper error bound
+ss = 1./(2.^(2:5));
+
+figure(8);
+for p=1:4
+    subplot(2,2,p), surf(X,Y,abs(M(:,:,s==ss(p))));
+    title(sprintf('S=%g',s(s==ss(p))));
+    zlim([0 upper]);
+end
+
+figure(9);
+loglog(s, arrayfun(@(i)norm(M(:,:,i),2),1:numel(s)));
+title('L_2 norm vs Step Size');
+xlabel('S');
 ylabel('L_2 norm of \epsilon_{abs}');
