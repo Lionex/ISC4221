@@ -160,3 +160,50 @@ legend(arrayfun(@(x,y) sprintf('(%g,%g)',x,y), I(:,1)./10, I(:,2)./10, ...
     'UniformOutput',false),'Location','northeastoutside')
 title(sprintf('%i Random Walks', size(I,1)))
 xlim([0,1]); ylim([0,1]);
+
+%% Varying the Number of Random Walks
+% We can approximate the solution to Laplace's equation with the random
+% walks, using the solution $u = e^ycos(x)$ to calculate the error for our
+% approximations.
+
+n = (1:10).*10;
+
+u = @(x) exp(x(1)).*cos(x(2));
+last = @(W) u(W(end,:));
+
+d = 1/10; % Define a resolution
+[X, Y] = meshgrid(0+d:d:1-d, 0+d:d:1-d); % Grid interior nodes
+E = exp(X).*cos(Y); % exact solution for each interior node
+
+M = zeros([size(X) numel(n)]);
+for i=1:numel(n)
+    L = zeros([size(X) n(i)]);
+    for j=1:n(i)
+        L(:,:,j) = arrayfun(...
+            @(x,y) last( randwalk([x y], [0 1; 0 1], 0.1) ), ...
+            X, Y);
+    end
+    M(:,:,i) = mean(L,3) - E;
+end
+
+%%
+% We can plot the error over the interior nodes for each number of random
+% walks $N$ and observe that the general trend is that the error decreases
+% with $N$, and the $L_2$ norm of the error also decreases with increasing
+% $N$.
+
+upper = round(max(max(max(M))),1); % find and round upper error bound
+ns = [10 20 50 100]; % Define the set of N values to plot, no more than 4
+
+figure(6);
+for p=1:4
+    subplot(2,2,p), surf(X,Y,abs(M(:,:,n==ns(p))));
+    title(sprintf("N=%i",ns(p)));
+    zlim([0 upper]);
+end
+
+figure(7);
+semilogy(n, arrayfun(@(i)norm(M(:,:,i))./n(i),1:numel(n)));
+title('L_2 norm vs N Walks');
+xlabel('N_{walks}');
+ylabel('L_2 norm of \epsilon_{abs}');
