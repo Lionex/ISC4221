@@ -90,7 +90,7 @@ move = @() S(randi([1 2],1));
 W = I;
 
 % Calculate random walk
-while ~any(stop(W(end,:))) % Test last row of W
+while ~stop(W(end,:)) % Test last row of W
     % Pre-initialize v
     v = zeros(size(I));
 
