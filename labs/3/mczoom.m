@@ -1,6 +1,15 @@
 function [ x, m, is ] = mczoom( f, a, b, n, z)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%MZOOM perfrorms simple monte carlo minimization on a 1D function
+%   Will perform an adpative zoom a specified number of times to
+%   theortically increase precision while also decreasing the number of
+%   iterations, but with the possibility of missing the global minimum.
+%
+%   MZOOM(f,n,z) uses n points to find min of function f where points are
+%   random in [0,1] and z is the number of zooms to perform
+%   MZOOM(f,a,b,n,z) uses n points to find min of f in [a,b]
+%
+%   [x,m,i] = MZOOM(...) where and m == f(x), is the minimum of f, i is the
+%   number of iterations
 
 if nargin < 4, n=a; z=b; a=0; b=1; end
 
