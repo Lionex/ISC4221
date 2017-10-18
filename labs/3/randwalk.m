@@ -17,15 +17,17 @@ function [ W ] = randwalk( I, D, S )
 %
 %   RANDWALK(I, stop) where stop is a function handle will end the walk
 %   when stop(W) evaluates to true, where W is the current row vector in
-%   the random walk.  If stop returns a logical vector, if any element is
+%   the random walk.  If stop returns a logical vector, when any element is
 %   true the random walk will stop. By default, stop is defined as:
 %
-%       @(w) or(w'<=D(:,1), w'>=D(:,2))
+%       @(w) or(w'<=D(:,1)+0.1*S, w'>=D(:,2)-0.1*S)
 %
-%   Note that use of integral step-sizes is preferable to non-integral
-%   step-sizes.
+%   Note that a margin of error is included to avoid issues with
+%   non-integral step sizes and the ordinal operators <= and >= regarding
+%   machine precision.
 %
-%   RANDWALK(I, D, S) takes axis-aligned steps of lenght S
+%   RANDWALK(I, D, S) takes axis-aligned steps of length S in all
+%   directions
 %
 %   W = RANDWALK(...) produces matrix W where each row is a step in the
 %   random walk.
@@ -58,7 +60,11 @@ if ismatrix(D) % Define stop function if one isn't user defined
     if size(D,1) ~= numel(I)
         error('Mismatched domain and initial point size');
     end
-    stop = @(w) or(w'<=D(:,1), w'>=D(:,2));
+    % Add a margin of error by decreasing the bounds by a fraction of the
+    % step size to avoid errors with floating point precision and the
+    % conditional or ordinal operators, especially when using non-integral
+    % step sizes.
+    stop = @(w) or(w'<=D(:,1)+0.1*S, w'>=D(:,2)-0.1*S);
 end
 if nargin < 3, S = 1; end
 
