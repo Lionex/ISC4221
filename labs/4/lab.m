@@ -8,9 +8,10 @@
 % It then becomes very easy to calculate the degree and edge count,
 % assuming our graph is undirected.
 
+read = @(fname) fscanf(fopen(fname),'%g %g', [2 inf])';
+
 % Produce graph
-edge_file = fopen('walther_edges.txt');
-E = fscanf(edge_file,'%g %g', [2 inf])';
+E = read('walther_edges.txt');
 G = edges2graph(E);
 
 % Print out degree for each node
