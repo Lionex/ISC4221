@@ -34,6 +34,8 @@ function [ G ] = edges2graph( E, directed )
 %
 %       G = EDGES2GRAPH(E);
 %       numel(G(1==G))/2 % divide by two for an undirected graph only
+%
+%   see also EDGES2WEIGHTED, NUMEL, SUM
 
 % Handle variadic arguments
 if size(E,2) ~= 2, E = fliplr(E'); end
