@@ -25,8 +25,33 @@ if size(E,1) ~= edgecount, error('Unexpected edge count'); end
 fprintf('\nedge count %i\n', edgecount);
 
 %% Problem 2
+% We can calculate the shortest path from a graph using breadth-first
+% search to produce the path.
 
+clear E G;
 
+% Produce graph
+G = edges2graph(read('paths_edges.txt'));
+
+% Test for the existence of paths between nodes
+p1 = bfs(G,7,8);
+if numel(p1) > 0
+    fprintf('A path exists connecting node G to node H:\n');
+    fprintf(' %i,', char(p1+64));
+    fprintf('.\n');
+else
+    disp('No path exists connecting node G to node H.');
+end
+
+% Test for the existence of paths between nodes
+p2 = bfs(G,7,9);
+if numel(p2) > 0
+    fprintf('A path exists connecting node G to node F:\n');
+    fprintf('%c(%i) ', [char(p2+64); p2]);
+    fprintf('\n');
+else
+    disp('No path exists connecting node G to node F.');
+end
 
 %% Problem 3
 
