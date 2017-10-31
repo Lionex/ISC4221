@@ -93,3 +93,61 @@ formatter = cell2mat(arrayfun(@(x)'%c(%c) ',1:size(W,1), ...
 fprintf([formatter '\n'],T);
 
 %% Problem 4
+% A simple heuristic method for solving the TSP problem is to pick a random
+% start point and perform a gready search for a roundtrip; in other words,
+% from each city pick the cheapest unvisited node.
+
+W = load('kn57.mat','-ASCII');
+W(W == 0) = Inf; % Set all unconnected cities to cost Inf
+
+% Pick a number of guesses to perform for the travelling salesman problem
+% with greedy heuristic
+K = 20;
+
+% Initialize cheapest path and lowest cost
+C = Inf;
+p = [];
+
+for i=1:K
+    % Guess a starting city at random
+    g = randi([1 57],1);
+
+    % Set up initial values
+    p = g;
+    cost = 0;
+
+    % Build a list of unvisited cities to update through each iteration
+    unvisited = (1:57)';
+
+    % Mark the current city as the first city
+    city = g;
+
+    numits = 0;
+    % Continue until we have exhasuted our unvisited cities
+    while numel(unvisited) > 1
+        % Remove the current city from the list of unvisited cities
+        unvisited = unvisited(unvisited ~= city);
+        % Find the minimum cost to the unvisited cities
+        local_cost = min(W(unvisited, city));
+        % Find cities with lowest cost, taking only the first
+        city = find(W(:,city) == local_cost, 1);
+
+        % Accumulate results
+        cost = cost + local_cost;
+        p = [p; city];
+    end
+
+    % Factor in return cost
+    cost = cost + W(city,g);
+
+    % If we've stumbled on a lower-cost path, choose it
+    if C > cost
+        if numel(p) ~= 57, error('Incomplete path'); end
+        if sort(p)' ~= 1:57, error('Path does not visit all cities'); end
+
+        P = p;
+        C = cost;
+    end
+end
+
+fprintf('Found shortest path of length %i. \n',C);
