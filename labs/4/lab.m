@@ -8,6 +8,7 @@
 % It then becomes very easy to calculate the degree and edge count,
 % assuming our graph is undirected.
 
+% Simple lambda to read edges from a file
 read = @(fname) fscanf(fopen(fname),'%g %g', [2 inf])';
 
 % Produce graph
