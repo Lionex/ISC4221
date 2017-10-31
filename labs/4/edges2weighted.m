@@ -4,8 +4,9 @@ function [ W, G ] = edges2weighted( E, directed )
 %   Will build a directed or undirected weighted graph.
 %
 %   Requiers an Edge matrix E, where each row or column contains:
-%   [ i j w ] where i and j are integer node ids, and w is the
-%   non-negative, non-zero weight of the connecition between i and j.
+%   [ i j w ] where i and j are integer node ids, and w is the 'length' or
+%   cost of the connection from i to j.  If i and j are not directly
+%   connected, the value is Inf.
 %
 %   The size of the adjacency matrix is SxS where S is the largest id.
 %
@@ -47,13 +48,12 @@ if ~all(all( E(:,1:2) == fix(E(:,1:2)) ))
     warning('E is not integral, calling fix(E)');
     E(:,1:2) = fix(E(:,1:2));
 end
-if ~all(all(E > 0)); error('E must be all positive non-zero values.'); end
 if nargin < 2, directed = 'undirected'; end
 directed = strcmp('directed',directed);
 
 % Preallocate empty adjacency matrix G and weight matrix W
 G = zeros(max(max(E(:,1:2))));
-W = zeros(size(G));
+W = zeros(size(G))+Inf;
 
 % To make the edges undirected, reverse every connection
 if ~directed, E = [E ; fliplr(E(:,1:2)) E(:,3)]; end
