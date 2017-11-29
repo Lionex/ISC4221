@@ -38,7 +38,7 @@ if isa(D,'function_handle')
 elseif isscalar(D)
     D=repmat([-abs(D) abs(D)], size(G,1), 1); % Convert scalar D to matrix
 end
-if exist('stop','var') == 0 % Define stop function if not provided
+if exist('sample','var') == 0 % Define stop function if not provided
     if size(D,1) ~= size(G,1)
         error('Mismatched constraint and generator dimensions');
     end
@@ -81,10 +81,10 @@ cf = @(D) mean(D,1);
 converge = @(G,G_n) max(sqrt(sum((G-G_n).^2,2))) < tol;
 
 % Index vector which keeps track of cluster membership
-I = ones(size(X,1));
+I = ones(size(X,1),1);
 
 G_n=G;
-for i_=1:10
+for i_=1:3e3
     % Sample space once again
     X = sample(G,s);
 
