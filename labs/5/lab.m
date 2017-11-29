@@ -82,7 +82,90 @@ end
 
 xs = 2:6;
 vs = arrayfun(@(i)sum(sum(V{i})),xs);
+figure(1)
 plot(xs,vs);
 title('Variance vs Number of Clusters');
 xlabel('number of clusters');
 ylabel('total variance');
+
+%% Part 2: K-Means for image compression
+% We can use k-means for image compression, but we must first adapt the
+% algorithm.
+%
+% Here the k-means algorithm was modified to create centroidal voronoi
+% tesselations.
+
+% utility function for plotting voronoi tesselations
+vrni = @(X) voronoi(X(:,1),X(:,2));
+
+% experiment function
+test = @(G,s) lloyds(G,s,1e-3,repmat([0 2], size(G,1), 1));
+
+G = rand(100,2);
+
+figure(2);
+title('Centroidal voronoi tesselations of 0, 10, and 100 samples');
+subplot(2,2,1); vrni(G);
+subplot(2,2,2); vrni(test(G,10));
+subplot(2,2,3); vrni(test(G,100));
+subplot(2,2,4); vrni(test(G,1000));
+
+%% B&W Image Compression
+% Here we use the centroidal voronoi tesselation to find a set of colors in
+% the color space which capture most of the color variation and use the
+% centroidal colors to produce a new image with less colors.
+B = imread('boat.tiff');
+figure(3);
+imshow(uint8(B));
+
+%%
+% We compress the image to 4, 8, 16, and 32 colors.
+
+cs=2.^(2:6);
+for n=1:4
+    B = imread('boat.tiff');
+    % shape B into a matrix of proper format
+    B = double(reshape(B, 512^2, 1));
+    % find replacement colors
+    [C,~,I] = lloyds(randi([0 255],cs(n),1), 8, 10-2, @(G,s)B);
+    % convert back to pixel color values
+    C = uint8(C); B = uint8(B);
+    % Replace all colors with the centroidal colors
+    for c=1:size(C,1), B(I==c) = C(c); end
+    % reshape B into image format
+    B = reshape(B,512,512);
+
+    figure(4);
+    subplot(2,2,n); imshow(B)
+    title(sprintf('%i colors', cs(n)));
+end
+
+%% Color Image Compression
+% The same routine works for color image compression, since the technique
+% scales to n dimensions.  In this case, $n=3$.
+
+B = imread('mandrill.tiff');
+figure(5);
+imshow(uint8(B));
+
+%%
+% We compress the RGB image to 4, 8, 16, and 32 colors.
+
+cs=2.^(2:6);
+for n=1:4
+    B = imread('mandrill.tiff');
+    % shape B into a matrix of proper format
+    B = double(reshape(B, 512^2, 3));
+    % find replacement colors
+    [C,~,I] = lloyds(randi([0 255],cs(n),3), 8, 10-2, @(G,s)B);
+    % convert back to pixel color values
+    C = uint8(C); B = uint8(B);
+    % Replace all colors with the centroidal colors
+    for c=1:size(C,1), B(I==c) = C(c); end
+    % reshape B into image format
+    B = reshape(B,512,512,3);
+
+    figure(6);
+    subplot(2,2,n); imshow(B)
+    title(sprintf('%i colors', cs(n)));
+end
