@@ -74,7 +74,7 @@ of = @(D) mean(D,1);
 converge = @(C,C_n) max(sqrt(sum((C-C_n).^2,2))) < tol;
 
 % Index vector which keeps track of cluster membership
-I = ones(size(D,1));
+I = ones(size(D,1),1);
 
 C_n=C;
 for i_=1:1e4
