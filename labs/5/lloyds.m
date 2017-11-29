@@ -1,4 +1,4 @@
-function [ G, V ] = lloyds( G, s, tol, D )
+function [ G, V, I ] = lloyds( G, s, tol, D )
 %LLOYDS produce a centroidal voronoi tesselation from generating points
 %
 %   LLOYDS(G,s) will cluster the data matrix D from the number of clusters
@@ -24,6 +24,17 @@ function [ G, V ] = lloyds( G, s, tol, D )
 %       G = rand(16,2);
 %       X = lloyds(G,100);
 %       voronoi(X(:,1),X(:,2));
+%
+%   Compress a grayscale image called boat.tiff
+%        colors = 16;
+%        B = imread('boat.tiff');
+%        B = double(reshape(B, 512^2, 1));
+%        [C,~,I] = lloyds(randi([0 255],colors,1), 8, 10-2, @(G,s)B);
+%        C = uint8(C); B = uint8(B);
+%        for c=1:size(C,1), B(I==c) = C(c); end
+%        B = reshape(B,512,512);
+%        imshow(B)
+%        title(sprintf('%i colors', colors));
 %
 %   See also PLOT, ARRAYFUN, PAREN, KMEANS
 
