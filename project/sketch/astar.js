@@ -156,7 +156,7 @@ p.draw = () => {
             p.noLoop()
         }
 
-        // Get list of neighbour positions, and bounds check on each
+        // Get list of neighbor positions, and bounds check on each
         let x = current.x
         let y = current.y
         let n = [
@@ -171,19 +171,19 @@ p.draw = () => {
         ]
         for (let i = 0; i < n.length; i++) {
             if (n[i].x >= 0 && n[i].x < grid.width && n[i].y >= 0 && n[i].y < grid.height) {
-                let neighbour = grid.nodes[n[i].x][n[i].y]
-                // If we have a valid neighbour, perform core A-Star evaluation
-                if (neighbour.valid()) {
-                    let cost = dist(current,neighbour)
+                let neighbor = grid.nodes[n[i].x][n[i].y]
+                // If we have a valid neighbor, perform core A-Star evaluation
+                if (neighbor.valid()) {
+                    let cost = dist(current,neighbor)
                     let g = cost + current.g
-                    if (g < neighbour.g) {
-                        let h = dist(end,neighbour)
-                        neighbour.g = g
-                        neighbour.parent = current
-                        neighbour.h = h
-                        neighbour.f = 0.6*neighbour.g + h
-                        if (neighbour.opened == false) {
-                            open.queue(neighbour.open())
+                    if (g < neighbor.g) {
+                        let h = dist(end,neighbor)
+                        neighbor.g = g
+                        neighbor.parent = current
+                        neighbor.h = h
+                        neighbor.f = 0.6*neighbor.g + h
+                        if (neighbor.opened == false) {
+                            open.queue(neighbor.open())
                         }
                     }
                 }

@@ -144,7 +144,7 @@ p.draw = () => {
             p.noLoop()
         }
 
-        // Get list of neighbour positions, and bounds check on each
+        // Get list of neighbor positions, and bounds check on each
         let x = current.x
         let y = current.y
         let n = [
@@ -159,16 +159,16 @@ p.draw = () => {
         ]
         for (let i = 0; i < n.length; i++) {
             if (n[i].x >= 0 && n[i].x < grid.width && n[i].y >= 0 && n[i].y < grid.height) {
-                let neighbour = grid.nodes[n[i].x][n[i].y]
-                // If we have a valid neighbour, explore following BFS's algorithm
-                let f = dist(current,neighbour) + current.f
-                if (f < neighbour.f) {
-                    neighbour.f = f
-                    neighbour.parent = current
+                let neighbor = grid.nodes[n[i].x][n[i].y]
+                // If we have a valid neighbor, explore following BFS's algorithm
+                let f = dist(current,neighbor) + current.f
+                if (f < neighbor.f) {
+                    neighbor.f = f
+                    neighbor.parent = current
                 }
-                if (neighbour.valid()) {
-                    if (neighbour.opened == false) {
-                        open.push(neighbour.open())
+                if (neighbor.valid()) {
+                    if (neighbor.opened == false) {
+                        open.push(neighbor.open())
                     }
                 }
             }

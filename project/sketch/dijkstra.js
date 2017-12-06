@@ -154,7 +154,7 @@ p.draw = () => {
             p.noLoop()
         }
 
-        // Get list of neighbour positions, and bounds check on each
+        // Get list of neighbor positions, and bounds check on each
         let x = current.x
         let y = current.y
         let n = [
@@ -169,16 +169,16 @@ p.draw = () => {
         ]
         for (let i = 0; i < n.length; i++) {
             if (n[i].x >= 0 && n[i].x < grid.width && n[i].y >= 0 && n[i].y < grid.height) {
-                let neighbour = grid.nodes[n[i].x][n[i].y]
-                // If we have a valid neighbour, explore following Dijkstra's algorithm
-                if (neighbour.valid()) {
-                    let cost = dist(current,neighbour)
+                let neighbor = grid.nodes[n[i].x][n[i].y]
+                // If we have a valid neighbor, explore following Dijkstra's algorithm
+                if (neighbor.valid()) {
+                    let cost = dist(current,neighbor)
                     let f = cost + current.f
-                    if (f < neighbour.f) {
-                        neighbour.parent = current
-                        neighbour.f = f
-                        if (neighbour.opened == false) {
-                            open.queue(neighbour.open())
+                    if (f < neighbor.f) {
+                        neighbor.parent = current
+                        neighbor.f = f
+                        if (neighbor.opened == false) {
+                            open.queue(neighbor.open())
                         }
                     }
                 }
