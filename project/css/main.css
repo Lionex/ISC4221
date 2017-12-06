@@ -1,0 +1,42 @@
+:root {
+    font-family: 'Roboto', sans-serif;
+}
+
+.title {
+    margin: auto;
+}
+
+.title__main {
+    text-align: center;
+    font-size: 3rem;
+}
+
+.title__sub {
+    text-align: center;
+    font-size: 1.5rem;
+}
+.title__summary {
+    text-align: justify;
+    font-size: 1rem;
+    padding: 1em 4em;
+    width: 60vw;
+    max-width: 700px;
+    min-width: 400px;
+    margin: auto;
+}
+
+.figures {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.figures__figure {
+    display: table;
+}
+
+.figures_figcaption {
+    display: table-caption;
+    caption-side: bottom;
+}

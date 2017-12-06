@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+    </script>
+    <script language="javascript" type="text/javascript" src="bower_components/MathJax/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script language="javascript" type="text/javascript" src="bower_components/p5js/lib/p5.js"></script>
+    <!-- uncomment lines below to include extra p5 libraries -->
+    <!--<script language="javascript" src="bower_components/p5js/lib/addons/p5.dom.js"></script>-->
+    <!--<script language="javascript" src="bower_components/p5js/lib/addons/p5.sound.js"></script>-->
+    <script language="javascript" type="text/javascript" src="js/priority-queue.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/astar.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/dijkstra.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/bfs.js"></script>
+</head>
+
+<body>
+    <main>
+        <header class="title">
+            <h1 class="title__main">Visualizing Graph Search Methods</h1>
+            <h2 class="title__sub">ISC4221 Final Project, Gwen Lofman</h2>
+            <p class="title__summary">
+                Graph search algorithms form key parts of many procesess, and find wide use in many contexts.  For cases where we have little information about our goal, or no easy way to estimate future costs, Dijkstra's algorithm remains the best algorithm to use, at least when we do not consider parallel or concurrent graph search methods.  However, some methods use a heuristic to estimate future costs, and additionally prioritize the search using information about how much it is likely to cost to reach the goal from the current node.  The better the heuristic, the more focused the search becomes.
+            </p>
+        </header>
+        <article>
+            <section class="figures">
+                <figure class="figures__figure figures__figure--interactive" id="astar">
+                    <div id="sketch-astar"></div>
+                    <figcaption class="figures_figcaption">
+                        A-star, a graph search method directed by a heuristic function $h$ which estimates future cost, and prioritizes nodes to search by the estimated total path cost, $f = g + h$ where $g$ is the cost-to-come
+                    </figcaption>
+                </figure>
+                <figure class="figures__figure figures__figure--interactive" id="dijkstra">
+                    <div id="sketch-dijkstra"></div>
+                    <figcaption class="figures_figcaption">
+                        Dijkstra, a graph search method which uses the cost-to-come to prioritize node search, and also builds a minimum spanning tree of the graph.
+                    </figcaption>
+                </figure>
+                <figure class="figures__figure figures__figure--interactive" id="bfs">
+                    <div id="sketch-bfs"></div>
+                    <figcaption class="figures_figcaption">
+                        Breadth-first search, a graph search method which expands nodes by inserting nodes it finds into a first-in-first-out queue.
+                    </figcaption>
+                </figure>
+            </section>
+            <section>
+                <p></p>
+            </section>
+        </article>
+    </main>
+</body>
+
+</html>
