@@ -2,6 +2,31 @@ const astar = function( p ) {
 
 // Preamble
 
+const u_obs = (grid) => {
+    let obstacles = []
+
+    // Create U shaped obstacles to test performance
+    x_max = grid.width-Math.floor(3*grid.width/8)
+    x_min = Math.floor(3*grid.width/8)
+    y_max = grid.height-Math.floor(grid.height/4)
+    y_min = Math.floor(grid.height/4)
+    for (let y = y_min; y <= y_max; y++) {
+        obstacles.push({x: x_max, y: y})
+    }
+    for (let x = x_min; x < x_max; x++) {
+        obstacles.push({x: x, y: y_min})
+        obstacles.push({x: x, y: y_max})
+    }
+    if (Math.ceil(x_min/3) >= 3) {
+        let d = Math.floor((y_max-y_min)/3)
+        for (let y = y_min+d; y <= y_max-d; y++) {
+            obstacles.push({x: Math.ceil(x_min/3), y: y})
+        }
+    }
+
+    return obstacles
+}
+
 const clamp = (v, min, max) => {
     return Math.min(Math.max(v, min), max)
 }
@@ -73,6 +98,8 @@ function Grid(size, w, h) {
         }
     }
 
+    this.start = this.nodes[0][0]
+
     this.draw = (canvas_w, canvas_h) => {
         this.x_offset = (canvas_w - ((this.width-1) * this.cell)) / 2
         this.y_offset = (canvas_h - ((this.height-1) * this.cell)) / 2
@@ -90,75 +117,10 @@ function Grid(size, w, h) {
     this.obstacles = (obs) => {
         obs.map((o) => {this.nodes[o.x][o.y].obstacle = true})
     }
-}
 
-let grid = new Grid(
-    cell_size,
-    Math.floor(width/cell_size),
-    Math.floor(height/cell_size)
-)
-
-let start = grid.nodes[0][Math.floor(grid.height/2)].open()
-start.g = 0
-let end = grid.nodes[grid.width-1][Math.floor(grid.height/2)]
-let current = start
-
-let open = new PriorityQueue({
-    comparator: (a,b) => {
-        if (a.f < b.f) {
-            return -1
-        } else if (a.f > b.f) {
-            return 1
-        } else {
-            return 0
-        }
-    },
-    initialValues: [start]
-})
-
-// Define sketch
-
-p.setup = () => {
-    let canvas = p.createCanvas(width,height)
-    let obstacles = []
-
-    // Create U shaped obstacles to test performance
-    x_max = grid.width-Math.floor(3*grid.width/8)
-    x_min = Math.floor(3*grid.width/8)
-    y_max = grid.height-Math.floor(grid.height/4)
-    y_min = Math.floor(grid.height/4)
-    for (let y = y_min; y <= y_max; y++) {
-        obstacles.push({x: x_max, y: y})
-    }
-    for (let x = x_min; x < x_max; x++) {
-        obstacles.push({x: x, y: y_min})
-        obstacles.push({x: x, y: y_max})
-    }
-    if (Math.ceil(x_min/3) >= 3) {
-        let d = Math.floor((y_max-y_min)/3)
-        for (let y = y_min+d; y <= y_max-d; y++) {
-            obstacles.push({x: Math.ceil(x_min/3), y: y})
-        }
-    }
-
-    grid.obstacles(obstacles)
-    console.log('Start A*')
-}
-
-p.draw = () => {
-    if (open.length > 0) {
-        // Open the next most optimal node and add it to the closed set
-        current = open.dequeue()
-        current.close()
-
-        if (current.x == end.x && current.y == end.y) {
-            console.log('Finished A*')
-            p.noLoop()
-        }
-
-        // Get list of neighbor positions, and bounds check on each
-        let x = current.x
-        let y = current.y
+    this.map_neighborhood = (c, f) => {
+        let x = c.x
+        let y = c.y
         let n = [
             {x: x+1, y: y},
             {x: x,   y: y+1},
@@ -170,25 +132,106 @@ p.draw = () => {
             {x: x-1, y: y+1}
         ]
         for (let i = 0; i < n.length; i++) {
-            if (n[i].x >= 0 && n[i].x < grid.width && n[i].y >= 0 && n[i].y < grid.height) {
+            if (n[i].x >= 0 && n[i].x < this.width && n[i].y >= 0 && n[i].y < this.height) {
                 let neighbor = grid.nodes[n[i].x][n[i].y]
-                // If we have a valid neighbor, perform core A-Star evaluation
-                if (neighbor.valid()) {
-                    let cost = dist(current,neighbor)
-                    let g = cost + current.g
-                    if (g < neighbor.g) {
-                        let h = dist(end,neighbor)
-                        neighbor.g = g
-                        neighbor.parent = current
-                        neighbor.h = h
-                        neighbor.f = 0.6*neighbor.g + h
-                        if (neighbor.opened == false) {
-                            open.queue(neighbor.open())
-                        }
-                    }
+                f(neighbor)
+            }
+        }
+    }
+}
+
+function AStar(start, end) {
+    this.start = start
+    this.start.g = 0
+    this.end = end
+    this.current = start
+
+    this.open = new PriorityQueue({
+        comparator: (a,b) => {
+            if (a.f < b.f) {
+                return -1
+            } else if (a.f > b.f) {
+                return 1
+            } else {
+                return 0
+            }
+        },
+        initialValues: [start]
+    })
+
+    this.converge = () => {
+        return this.current.x == this.end.x && this.current.y == this.end.y
+    }
+
+    this.pop = () => {
+        this.current = this.open.dequeue()
+        this.current.close()
+
+        return this.current
+    }
+
+    this.step = (neighbor) => {
+        if (neighbor.valid()) {
+            let cost = dist(this.current,neighbor)
+            let g = cost + this.current.g
+            if (g < neighbor.g) {
+                let h = dist(this.end,neighbor)
+                neighbor.g = g
+                neighbor.parent = this.current
+                neighbor.h = h
+                neighbor.f = 0.6*neighbor.g + h
+                if (neighbor.opened == false) {
+                    this.open.queue(neighbor.open())
                 }
             }
         }
+    }
+}
+
+let grid = new Grid(
+    cell_size,
+    Math.floor(width/cell_size),
+    Math.floor(height/cell_size)
+)
+
+let search = undefined
+
+// Define sketch
+
+p.setup = () => {
+    let canvas = p.createCanvas(width,height)
+
+    let obstacles = u_obs(grid)
+
+    grid.obstacles(obstacles)
+
+    let start = grid.nodes[0][Math.floor(grid.height/2)].open()
+    start.g = 0
+    let end = grid.nodes[grid.width-1][Math.floor(grid.height/2)]
+
+    search = new AStar(
+        start,
+        end,
+    )
+    console.log('Start A*')
+}
+
+p.draw = () => {
+    let current = search.current
+    if (search.open.length > 0) {
+        // Open the next most optimal node and add it to the closed set
+        current = search.pop()
+
+        if (search.converge()) {
+            console.log('Finished A*')
+            p.noLoop()
+        }
+
+        // Perform search operation on every neighbor
+        grid.map_neighborhood(current, (neighbor) => {
+            // If we have a valid neighbor, perform core A-Star evaluation
+            search.step(neighbor)
+        })
     } else {
         p.noLoop()
     }
