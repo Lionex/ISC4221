@@ -1,4 +1,56 @@
-const astar = function( p ) {
+function AStar(start, end) {
+    this.start = start
+    this.start.g = 0
+    this.end = end
+    this.current = start
+
+    this.open = new PriorityQueue({
+        comparator: (a,b) => {
+            if (a.f < b.f) {
+                return -1
+            } else if (a.f > b.f) {
+                return 1
+            } else {
+                return 0
+            }
+        },
+        initialValues: [start]
+    })
+
+    this.converge = () => {
+        return this.current.x == this.end.x && this.current.y == this.end.y
+    }
+
+    this.pop = () => {
+        this.current = this.open.dequeue()
+        this.current.close()
+
+        return this.current
+    }
+
+    this.dist = (c,n) => {
+        return Math.sqrt((c.x-n.x)*(c.x-n.x)+(c.y-n.y)*(c.y-n.y))
+    }
+
+    this.step = (neighbor) => {
+        if (neighbor.valid()) {
+            let cost = this.dist(this.current,neighbor)
+            let g = cost + this.current.g
+            if (g < neighbor.g) {
+                let h = this.dist(this.end,neighbor)
+                neighbor.g = g
+                neighbor.parent = this.current
+                neighbor.h = h
+                neighbor.f = 0.6*neighbor.g + h
+                if (neighbor.opened == false) {
+                    this.open.queue(neighbor.open())
+                }
+            }
+        }
+    }
+}
+
+const sketch = (Search) => {return function( p ) {
 
 // Preamble
 
@@ -34,10 +86,6 @@ const clamp = (v, min, max) => {
 const width = clamp(window.innerWidth*0.8/3.33, 200, 700)
 const height = Math.max(2*width/3, 300)
 const cell_size = Math.max(width/20,height/20)-1
-
-const dist = (c, n) => {
-    return Math.sqrt((c.x-n.x)*(c.x-n.x)+(c.y-n.y)*(c.y-n.y))
-}
 
 function Node(x,y) {
     this.x = x
@@ -140,61 +188,13 @@ function Grid(size, w, h) {
     }
 }
 
-function AStar(start, end) {
-    this.start = start
-    this.start.g = 0
-    this.end = end
-    this.current = start
-
-    this.open = new PriorityQueue({
-        comparator: (a,b) => {
-            if (a.f < b.f) {
-                return -1
-            } else if (a.f > b.f) {
-                return 1
-            } else {
-                return 0
-            }
-        },
-        initialValues: [start]
-    })
-
-    this.converge = () => {
-        return this.current.x == this.end.x && this.current.y == this.end.y
-    }
-
-    this.pop = () => {
-        this.current = this.open.dequeue()
-        this.current.close()
-
-        return this.current
-    }
-
-    this.step = (neighbor) => {
-        if (neighbor.valid()) {
-            let cost = dist(this.current,neighbor)
-            let g = cost + this.current.g
-            if (g < neighbor.g) {
-                let h = dist(this.end,neighbor)
-                neighbor.g = g
-                neighbor.parent = this.current
-                neighbor.h = h
-                neighbor.f = 0.6*neighbor.g + h
-                if (neighbor.opened == false) {
-                    this.open.queue(neighbor.open())
-                }
-            }
-        }
-    }
-}
-
 let grid = new Grid(
     cell_size,
     Math.floor(width/cell_size),
     Math.floor(height/cell_size)
 )
 
-let search = undefined
+let Search = undefined
 
 // Define sketch
 
@@ -229,7 +229,9 @@ p.draw = () => {
 
         // Perform search operation on every neighbor
         grid.map_neighborhood(current, (neighbor) => {
-            // If we have a valid neighbor, perform core A-Star evaluation
+            // If we have a valid neighbor, perform search step which evaulates
+            // each neighbor according to the rules of the particular search
+            // algorithm
             search.step(neighbor)
         })
     } else {
@@ -252,8 +254,8 @@ p.draw = () => {
         p.noStroke()
         current = parent
     }
-}
+}}
 
 }
 
-const p5_astar = new p5(astar, 'sketch-astar')
+const p5_astar = new p5(sketch(AStar), 'sketch-astar')
