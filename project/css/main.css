@@ -1,6 +1,9 @@
 :root {
     font-family: 'Roboto', sans-serif;
 }
+* {
+    box-sizing: border-box;
+}
 
 .title {
     margin: auto;
@@ -25,18 +28,66 @@
     margin: auto;
 }
 
-.figures {
+.figure-group {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     flex-wrap: wrap;
     flex-direction: row;
+    margin: 0;
+    padding: 0;
 }
 
-.figures__figure {
+.figure {
     display: table;
+    margin: 0 auto;
 }
 
-.figures_figcaption {
+.figure--algorithm {
+    width: 100%;
+}
+
+.section--figure {
+    width: 80vw;
+    max-width: 1800px;
+}
+
+.figure__caption {
     display: table-caption;
+    margin-bottom: 0.5rem;
+}
+
+.figure__caption--bottom {
     caption-side: bottom;
+}
+
+
+.figure__caption--top {
+    caption-side: top;
+}
+
+
+.section {
+    margin: 0 15vw;
+    padding: 0.25em;
+    padding-bottom: 1em;
+    text-align: justify;
+}
+
+.section:first-of-type {
+    padding-top: 3em;
+}
+
+.section:last-of-type {
+    padding-bottom: 3em;
+}
+
+.section__title {
+    font-weight: 500;
+    margin: 0;
+    margin-bottom: 0.5em;
+}
+
+.container {
+    padding: 0;
+    margin: auto;
 }
