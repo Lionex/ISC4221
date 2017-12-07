@@ -66,12 +66,32 @@
             </figure>
             <section class="section">
                 <h2 class="section__title">Breadth-First Search</h2>
+                <p>Breadth-first search does not prioritize nodes as it finds them, it simply adds them to a queue.</p>
                 <figure id="bfs-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="bfs-code" style="display: none;">
                         \begin{algorithm}
                         \caption{Breadth-First Search}
                         \begin{algorithmic}
-                        \PROCEDURE{BFS}{$G, s, e$}
+                        \PROCEDURE{BFS}{$Graph, start, end$}
+                            \STATE $open := $\CALL{Queue}{}
+                            \STATE $closed := $\CALL{Set}{}
+                            \STATE $open.$\CALL{queue}{$start$}
+                            \STATE $parent. := $\CALL{Map}{}
+                            \WHILE {\NOT $open.$\CALL{isempty}{}}
+                                \STATE current $\gets$ open.\CALL{pop}{}
+                                \IF{current == end}
+                                    \RETURN \CALL{path}{$parent$}
+                                \ENDIF
+                                \FOR{$neighbor$ in $graph.$\CALL{neighbors}{$current$}}
+                                    \IF{$neighbor$ in $closed$}
+                                        \STATE continue
+                                    \ENDIF
+                                    \IF{$neighbor$ \NOT in $open$}
+                                        \STATE $open.$\CALL{queue}{$neighbor$}
+                                    \ENDIF
+                                    \STATE $parent[neighbor] = current$
+                                \ENDFOR
+                            \ENDWHILE
                         \ENDPROCEDURE
                         \end{algorithmic}
                         \end{algorithm}
@@ -92,7 +112,31 @@
                         \begin{algorithm}
                         \caption{Dijkstra's Algorithm}
                         \begin{algorithmic}
-                        \PROCEDURE{Dijkstra}{$G, s, e$}
+                        \PROCEDURE{Dijkstra}{$graph, start, end$}
+                        \STATE $open := $\CALL{PriorityQueue}{}  \COMMENT{prioritize by $g$}
+                        \STATE $closed := $\CALL{Set}{}
+                        \STATE $parent. := $\CALL{Map}{}
+                        \STATE $start.g \gets 0$
+                        \STATE $open.$\CALL{queue}{$start$}
+                        \WHILE {\NOT $open.$\CALL{isempty}{}}
+                            \STATE $current$ $\gets$ open.\CALL{pop}{}
+                            \IF{$current$ == end}
+                                \RETURN \CALL{path}{$parent$}
+                            \ENDIF
+                            \FOR{$neighbor$ in $graph.$\CALL{neighbors}{$current$}}
+                                \IF{$neighbor$ in $closed$}
+                                    \STATE continue
+                                \ENDIF
+                                \STATE $g \gets $\CALL{dist}{$current, neighbor$}
+                                \IF{$neighbor.g > g$}
+                                    \STATE $neighbor.g \gets g$
+                                    \STATE $parent[neighbor] = current$
+                                \ENDIF
+                                \IF{$neighbor$ \NOT in $open$}
+                                    \STATE $open.$\CALL{insert}{$neighbor$}
+                                \ENDIF
+                            \ENDFOR
+                        \ENDWHILE
                         \ENDPROCEDURE
                         \end{algorithmic}
                         \end{algorithm}
@@ -113,7 +157,35 @@
                         \begin{algorithm}
                         \caption{A*}
                         \begin{algorithmic}
-                        \PROCEDURE{AStar}{$G, s, e$}
+                        \PROCEDURE{AStar}{$graph, search, end$}
+                        \STATE $open := $\CALL{PriorityQueue}{} \COMMENT{prioritize by $f$}
+                        \STATE $closed := $\CALL{Set}{}
+                        \STATE $parent. := $\CALL{Map}{}
+                        \STATE $start.g \gets 0$
+                        \STATE $open.$\CALL{queue}{$start$}
+                        \WHILE {\NOT $open.$\CALL{isempty}{}}
+                            \STATE $current$ $\gets$ open.\CALL{pop}{}
+                            \IF{$current$ == end}
+                                \RETURN \CALL{path}{$parent$}
+                            \ENDIF
+                            \FOR{$neighbor$ in $graph.$\CALL{neighbors}{$current$}}
+                                \IF{$neighbor$ in $closed$}
+                                    \STATE continue
+                                \ENDIF
+                                \STATE $g \gets $\CALL{dist}{$current, neighbor$}
+                                \STATE $g \gets $\CALL{heuristic}{$neighbor,end$}
+                                \STATE $f \gets g + h$  \COMMENT{estimate of total cost}
+                                \IF{$neighbor.g > g$}
+                                    \STATE $neighbor.g \gets g$
+                                    \STATE $neighbor.h \gets h$
+                                    \STATE $neighbor.f \gets f$
+                                    \STATE $parent[neighbor] = current$
+                                \ENDIF
+                                \IF{$neighbor$ \NOT in $open$}
+                                    \STATE $open.$\CALL{insert}{$neighborg$}
+                                \ENDIF
+                            \ENDFOR
+                        \ENDWHILE
                         \ENDPROCEDURE
                         \end{algorithmic}
                         \end{algorithm}
