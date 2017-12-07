@@ -2,8 +2,11 @@ const clamp = (v, min, max) => {
     return Math.min(Math.max(v, min), max)
 }
 
-const width = clamp(window.innerWidth*0.8/3.5+1, 200, 700)
-const height = Math.max(2*width/3, 300)
+const width = window.innerWidth > 900 ?
+    clamp(window.innerWidth*0.8/3.5+1, 200, 600) : 5*window.innerWidth/9
+const height = Math.max(2*width/3, 350)
+
+console.log('width: ', width, ' height: ', height)
 
 const u_obs = (grid) => {
     let obstacles = []
@@ -20,7 +23,7 @@ const u_obs = (grid) => {
         obstacles.push({x: x, y: y_min})
         obstacles.push({x: x, y: y_max})
     }
-    if (Math.ceil(x_min/3) >= 3) {
+    if (Math.ceil(x_min/3) >= 2) {
         let d = Math.floor((y_max-y_min)/3)
         for (let y = y_min+d; y <= y_max-d; y++) {
             obstacles.push({x: Math.ceil(x_min/3), y: y})
@@ -138,7 +141,7 @@ function Grid(size, w, h) {
 
 function sketch(width, height, graph_search) {return ( p ) => {
 
-const cell_size = Math.max(width/20,height/20)-1
+const cell_size = Math.max(width/16,height/16)-1
 
 let grid = new Grid(
     cell_size,
