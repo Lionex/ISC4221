@@ -7,9 +7,16 @@
     <link rel="stylesheet" href="css/main.css">
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+      tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']],
+          extensions: ["TeX/AMSmath.js", "TeX/AMSsymbol.js"]
+      }
     });
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css" integrity="sha384-exe4Ak6B0EoJI0ogGxjJ8rn+RN3ftPnEQrGwX59KTCl5ybGzvHGKjhPKk/KC3abb" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.js" integrity="sha384-OMvkZ24ANLwviZR2lVq8ujbE/bUO8IR1FdBrKLQBI14Gq5Xp/lksIccGkmKL8m+h" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/assets/pseudocode/pseudocode.min.css">
+    <script src="/assets/pseudocode/pseudocode.min.js"></script>
     <script language="javascript" type="text/javascript" src="bower_components/MathJax/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <script language="javascript" type="text/javascript" src="bower_components/p5js/lib/p5.js"></script>
     <!-- uncomment lines below to include extra p5 libraries -->
@@ -58,6 +65,67 @@
                 </figcaption>
             </figure>
             <section class="section">
+                <h2 class="section__title">Breadth-First Search</h2>
+                <figure id="bfs-algorithm" class="figure figure--inline figure--algorithm">
+                    <pre id="bfs-code" style="display: none;">
+                        \begin{algorithm}
+                        \caption{Breadth-First Search}
+                        \begin{algorithmic}
+                        \PROCEDURE{BFS}{$G, s, e$}
+                        \ENDPROCEDURE
+                        \end{algorithmic}
+                        \end{algorithm}
+                    </pre>
+                    <script>
+                        pseudocode.render(
+                            document.getElementById("bfs-code").textContent,
+                            document.getElementById("bfs-algorithm"),
+                            {lineNumber: true}
+                        )
+                    </script>
+                </figure>
+            </section>
+            <section class="section">
+                <h2 class="section__title">Dijkstra's Algorithm</h2>
+                <figure id="dijkstra-algorithm" class="figure figure--inline figure--algorithm">
+                    <pre id="dijkstra-code" style="display: none;">
+                        \begin{algorithm}
+                        \caption{Dijkstra's Algorithm}
+                        \begin{algorithmic}
+                        \PROCEDURE{Dijkstra}{$G, s, e$}
+                        \ENDPROCEDURE
+                        \end{algorithmic}
+                        \end{algorithm}
+                    </pre>
+                    <script>
+                        pseudocode.render(
+                            document.getElementById("dijkstra-code").textContent,
+                            document.getElementById("dijkstra-algorithm"),
+                            {lineNumber: true}
+                        )
+                    </script>
+                </figure>
+            </section>
+            <section class="section">
+                <h2 class="section__title">A* Graph Search</h2>
+                <figure id="astar-algorithm" class="figure figure--inline figure--algorithm">
+                    <pre id="astar-code" style="display: none;">
+                        \begin{algorithm}
+                        \caption{A*}
+                        \begin{algorithmic}
+                        \PROCEDURE{AStar}{$G, s, e$}
+                        \ENDPROCEDURE
+                        \end{algorithmic}
+                        \end{algorithm}
+                    </pre>
+                    <script>
+                        pseudocode.render(
+                            document.getElementById("astar-code").textContent,
+                            document.getElementById("astar-algorithm"),
+                            {lineNumber: true}
+                        )
+                    </script>
+                </figure>
             </section>
         </article>
     </main>
