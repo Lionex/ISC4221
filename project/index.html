@@ -14,7 +14,7 @@
     });
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css" integrity="sha384-exe4Ak6B0EoJI0ogGxjJ8rn+RN3ftPnEQrGwX59KTCl5ybGzvHGKjhPKk/KC3abb" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.js" integrity="sha384-OMvkZ24ANLwviZR2lVq8ujbE/bUO8IR1FdBrKLQBI14Gq5Xp/lksIccGkmKL8m+h" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.js" integrity="sha384-OMvkZ24ANLwviZR2lVq8ujbE/bUO8IR1FdBrKLQBI14Gq5Xp/lksIccGkmKL8m+h" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/assets/pseudocode/pseudocode.min.css">
     <script src="/assets/pseudocode/pseudocode.min.js"></script>
     <script language="javascript" type="text/javascript" src="bower_components/MathJax/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -66,8 +66,19 @@
                 </figcaption>
             </figure>
             <section class="section">
+                <p>Graph search algorithms find a path from one node in the graph to another.  As graphs have more interconnections, become larger, and become more dense, searching through nodes to find paths becomes a more complicated and difficult task.  As we can gather more information about our world, and use it in our search algorithms, we find clever ways to cheat and improve the performance of graphs.  Here I will examine three algorithms which perform graph search, and discuss their properties.  In order of increasing complexity, <ul><li>Breadth-First Search</li><li>Dijkstra's Algorithm</li><li>A* Graph Search</li></ul></p>
+            </section>
+            <section class="section">
                 <h2 class="section__title">Breadth-First Search</h2>
-                <p>Breadth-first search does not prioritize nodes as it finds them, it simply adds them to a queue.</p>
+                <p></p>
+                <p>Breadth-first search does not prioritize nodes as it finds them, it simply adds them to a first-in-first-out queue.  In practice, this means the algorithm tends to process nodes in "levels" equidistant from the start in terms of the number of expansions, not in terms of the path distance to the current node.  Watch the algorithm visualization carefully to see the way breadth-first search sweeps level-by-level across the search space.</p>
+                <figure class="figure figure--interactive" id="bfs">
+                    <div id="sketch-bfs-c" class="figure__sketch"></div>
+                    <figcaption class="figure__caption figure__caption--bottom">
+                        <b>Figure 2.</b> notice the sweeping behavior of breadth-first search.
+                    </figcaption>
+                </figure>
+                <p>What's more, the algorithm is relatively simple and only relies on parallelizable data structures, which opens up breadth-first search to parallel implementations.  However, we end up searching a lot of nodes we don't really need to search to find the optimal solution, and the basic algorithm doesn't necesarily find the optimial path unless it's been extended to keep track of costs as it traverses the graph like my implementation has.</p>
                 <figure id="bfs-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="bfs-code" style="display: none;">
                         \begin{algorithm}
@@ -108,6 +119,12 @@
             </section>
             <section class="section">
                 <h2 class="section__title">Dijkstra's Algorithm</h2>
+                <figure class="figure figure--interactive" id="bfs">
+                    <div id="sketch-dijkstra-c" class="figure__sketch"></div>
+                    <figcaption class="figure__caption figure__caption--bottom">
+                        <b>Figure 3.</b> notice the shape of Dijkstra's frontier.
+                    </figcaption>
+                </figure>
                 <figure id="dijkstra-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="dijkstra-code" style="display: none;">
                         \begin{algorithm}
@@ -128,7 +145,7 @@
                                 \IF{$neighbor$ in $closed$}
                                     \STATE continue
                                 \ENDIF
-                                \STATE $g \gets $\CALL{dist}{$current, neighbor$}
+                                \STATE $g \gets $\CALL{dist}{$current, neighbor$}$ + current.g$
                                 \IF{$neighbor.g > g$}
                                     \STATE $neighbor.g \gets g$
                                     \STATE $parent[neighbor] = current$
@@ -153,6 +170,12 @@
             </section>
             <section class="section">
                 <h2 class="section__title">A* Graph Search</h2>
+                <figure class="figure figure--interactive" id="bfs">
+                    <div id="sketch-astar-c" class="figure__sketch"></div>
+                    <figcaption class="figure__caption figure__caption--bottom">
+                        <b>Figure 4.</b> notice how A* takes a direct path and then back-tracks when it hits an obstacle.
+                    </figcaption>
+                </figure>
                 <figure id="astar-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="astar-code" style="display: none;">
                         \begin{algorithm}
@@ -173,8 +196,8 @@
                                 \IF{$neighbor$ in $closed$}
                                     \STATE continue
                                 \ENDIF
-                                \STATE $g \gets $\CALL{dist}{$current, neighbor$}
-                                \STATE $g \gets $\CALL{heuristic}{$neighbor,end$}
+                                \STATE $g \gets $\CALL{dist}{$current, neighbor$} + $current.g$
+                                \STATE $h \gets $\CALL{heuristic}{$neighbor,end$}
                                 \STATE $f \gets g + h$  \COMMENT{estimate of total cost}
                                 \IF{$neighbor.g > g$}
                                     \STATE $neighbor.g \gets g$
