@@ -17,8 +17,8 @@ const sketches = [
     {
         sketch: sketch(
             u_start,
-            c_end,
-            c_obs,
+            u_end,
+            (grid) => [],
             window.innerWidth/3,
             window.innerWidth/3,
             (w, h) => new BFS(w,h)
@@ -39,8 +39,8 @@ const sketches = [
     {
         sketch: sketch(
             u_start,
-            c_end,
-            c_obs,
+            u_end,
+            (grid) => [],
             window.innerWidth/3,
             window.innerWidth/3,
             (w, h) => new Dijkstra(w,h)
@@ -61,8 +61,8 @@ const sketches = [
     {
         sketch: sketch(
             u_start,
-            c_end,
-            c_obs,
+            u_end,
+            i_obs,
             window.innerWidth/3,
             window.innerWidth/3,
             (w, h) => new AStar(w,h)

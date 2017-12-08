@@ -27,20 +27,15 @@ const u_obs = (grid) => {
     return obstacles
 }
 
-const c_obs = (grid) => {
+const i_obs = (grid) => {
     let obstacles = []
 
     // Create c shaped obstacles to test performance of bfs vs dijkstra
-    x_max = grid.width-3
-    x_min = 3
-    y_max = grid.height-2
-    y_min = 1
+    let x = grid.width-3
+    let y_max = grid.height-2
+    let y_min = 1
     for (let y = y_min; y <= y_max; y++) {
-        obstacles.push({x: x_min, y: y})
-    }
-    for (let x = x_min; x < x_max; x++) {
-        obstacles.push({x: x, y: y_min})
-        obstacles.push({x: x, y: y_max})
+        obstacles.push({x: x, y: y})
     }
 
     return obstacles
