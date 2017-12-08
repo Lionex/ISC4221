@@ -94,6 +94,15 @@ function Node(x,y) {
     this.valid = () => {
         return !(this.closed || this.obstacle)
     }
+
+    this.reset = () => {
+        this.f = 0
+        this.g = Infinity
+        this.h = 0
+        this.parent = undefined
+        this.closed = false
+        this.opened = false
+    }
 }
 
 function Grid(size, w, h) {
@@ -165,7 +174,6 @@ function Grid(size, w, h) {
     }
 }
 
-
 function sketch(calc_start, calc_end, obs, width, height, graph_search) {return ( p ) => {
 
 const cell_size = Math.max(width/16,height/16)-1
@@ -199,21 +207,25 @@ p.setup = () => {
 
 let paused = false
 let converged = false
-p.touchEnded = () => {
-    if (paused || converged) {
-        p.noLoop()
-    } else {
-        p.loop()
+p.touchEnded = p.mouseReleased = () => {
+    if (p.mouseX > 0 && p.mouseY > 0 && p.mouseY < p.height && p.mouseX < p.width) {
+        paused = !paused
+        // Restart search if search has converged already
+        if (converged) {
+            grid.nodes.map((col) => col.map((node) => node.reset()))
+            search = graph_search(
+                start,
+                end,
+            )
+            paused = false
+            converged = false
+            p.loop()
+        } else if (paused) {
+            p.noLoop()
+        } else {
+            p.loop()
+        }
     }
-    paused = !paused
-}
-p.mouseReleased = () => {
-    if (paused || converged) {
-        p.noLoop()
-    } else {
-        p.loop()
-    }
-    paused = !paused
 }
 
 p.draw = () => {
