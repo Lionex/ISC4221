@@ -150,9 +150,11 @@
                                 \IF{$neighbor.g > g$}
                                     \STATE $neighbor.g \gets g$
                                     \STATE $parent[neighbor] = current$
-                                \ENDIF
-                                \IF{$neighbor$ \NOT in $open$}
-                                    \STATE $open.$\CALL{insert}{$neighbor$}
+                                    \IF{$neighbor$ \NOT in $open$}
+                                        \STATE $open.$\CALL{insert}{$neighbor$}
+                                    \ELSE
+                                        \STATE $open.$\CALL{increasePriority}{$neighbor$}
+                                    \ENDIF
                                 \ENDIF
                             \ENDFOR
                         \ENDWHILE
@@ -205,9 +207,11 @@
                                     \STATE $neighbor.h \gets h$
                                     \STATE $neighbor.f \gets f$
                                     \STATE $parent[neighbor] = current$
-                                \ENDIF
-                                \IF{$neighbor$ \NOT in $open$}
-                                    \STATE $open.$\CALL{insert}{$neighborg$}
+                                    \IF{$neighbor$ \NOT in $open$}
+                                        \STATE $open.$\CALL{insert}{$neighbor$}
+                                    \ELSE
+                                        \STATE $open.$\CALL{increasePriority}{$neighbor$}
+                                    \ENDIF
                                 \ENDIF
                             \ENDFOR
                         \ENDWHILE
