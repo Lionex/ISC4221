@@ -73,7 +73,16 @@ const sketches = [
 
 window.onload = () => {
     sketches.map((o) => {
-        console.log('Loading', o.id)
-        new p5(o.sketch, o.id)
+        let el = document.getElementById(o.id)
+        let sketch = new p5(o.sketch, o.id)
+
+        let loaded = false
+
+        // Add listeners
+        el.addEventListener('invisible', () => sketch.pause(), false)
+        window.addEventListener('scroll', () => view_event(el))
+
+        // Check if in view on page load
+        view_event(el)
     })
 }

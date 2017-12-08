@@ -187,21 +187,23 @@ let start = calc_start(grid)
 start.g = 0
 let end = calc_end(grid)
 
-p.setup = () => {
-    let canvas = p.createCanvas(width,height)
-
-    let obstacles = obs(grid)
-
-    grid.obstacles(obstacles)
-
-    search = graph_search(
-        start,
-        end,
-    )
-}
-
 let paused = false
 let converged = false
+
+p.pause = () => {
+    if (!converged) {
+        p.noLoop()
+        paused = true
+    }
+}
+
+p.play = () => {
+    if (!converged) {
+        p.loop()
+        paused = false
+    }
+}
+
 p.touchEnded = p.mouseReleased = () => {
     if (p.mouseX > 0 && p.mouseY > 0 && p.mouseY < p.height && p.mouseX < p.width) {
         paused = !paused
@@ -216,11 +218,24 @@ p.touchEnded = p.mouseReleased = () => {
             converged = false
             p.loop()
         } else if (paused) {
-            p.noLoop()
+            p.pause()
         } else {
-            p.loop()
+            p.play()
         }
     }
+}
+
+p.setup = () => {
+    let canvas = p.createCanvas(width,height)
+
+    let obstacles = obs(grid)
+
+    grid.obstacles(obstacles)
+
+    search = graph_search(
+        start,
+        end,
+    )
 }
 
 p.draw = () => {
