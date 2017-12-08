@@ -49,10 +49,3 @@ function AStar(start, end) {
         }
     }
 }
-
-const p5_astar = new p5(
-    sketch(width, height, (w, h) => {
-        return new AStar(w,h)
-    }),
-    'sketch-astar'
-)

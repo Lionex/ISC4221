@@ -35,10 +35,3 @@ function BFS(start, end) {
         }
     }
 }
-
-const p5_bfs = new p5(
-    sketch(width, height, (w, h) => {
-        return new BFS(w,h)
-    }),
-    'sketch-bfs'
-)

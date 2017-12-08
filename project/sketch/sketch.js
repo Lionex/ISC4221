@@ -2,12 +2,6 @@ const clamp = (v, min, max) => {
     return Math.min(Math.max(v, min), max)
 }
 
-const width = window.innerWidth > 900 ?
-    clamp(window.innerWidth*0.8/3.5+1, 200, 600) : 5*window.innerWidth/9
-const height = Math.max(2*width/3, 350)
-
-console.log('width: ', width, ' height: ', height)
-
 const u_obs = (grid) => {
     let obstacles = []
 
@@ -31,6 +25,31 @@ const u_obs = (grid) => {
     }
 
     return obstacles
+}
+
+const c_obs = (grid) => {
+    let obstacles = []
+
+    // Create c shaped obstacles to test performance of bfs vs dijkstra
+    x_max = grid.width-3
+    x_min = 3
+    y_max = grid.height-2
+    y_min = 1
+    for (let y = y_min; y <= y_max; y++) {
+        obstacles.push({x: x_min, y: y})
+    }
+    for (let x = x_min; x < x_max; x++) {
+        obstacles.push({x: x, y: y_min})
+        obstacles.push({x: x, y: y_max})
+    }
+
+    return obstacles
+}
+
+const u_start = (grid) => grid.nodes[0][Math.floor(grid.height/2)].open()
+const u_end = (grid) => grid.nodes[grid.width-1][Math.floor(grid.height/2)]
+const c_end = (grid) => {
+    return grid.nodes[Math.floor(grid.width/2)-1][Math.floor(grid.height/2)]
 }
 
 function Node(x,y) {
@@ -136,10 +155,18 @@ function Grid(size, w, h) {
             }
         }
     }
+
+    this.get_coord = (canvas_w, canvas_h, node) => {
+        this.x_offset = (canvas_w - ((this.width-1) * this.cell)) / 2
+        this.y_offset = (canvas_h - ((this.height-1) * this.cell)) / 2
+        let px = node.x*this.cell+this.x_offset
+        let py = node.y*this.cell+this.y_offset
+        return {x: px, y: py}
+    }
 }
 
 
-function sketch(width, height, graph_search) {return ( p ) => {
+function sketch(calc_start, calc_end, obs, width, height, graph_search) {return ( p ) => {
 
 const cell_size = Math.max(width/16,height/16)-1
 

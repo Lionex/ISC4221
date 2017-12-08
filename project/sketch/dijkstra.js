@@ -47,10 +47,3 @@ function Dijkstra(start, end) {
         }
     }
 }
-
-const p5_dijkstra = new p5(
-    sketch(width, height, (w, h) => {
-        return new Dijkstra(w,h)
-    }),
-    'sketch-dijkstra'
-)
