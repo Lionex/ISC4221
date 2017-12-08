@@ -180,22 +180,21 @@ let search = undefined
 
 // Define sketch
 
+let start = calc_start(grid)
+start.g = 0
+let end = calc_end(grid)
+
 p.setup = () => {
     let canvas = p.createCanvas(width,height)
 
-    let obstacles = u_obs(grid)
+    let obstacles = obs(grid)
 
     grid.obstacles(obstacles)
-
-    let start = grid.nodes[0][Math.floor(grid.height/2)].open()
-    start.g = 0
-    let end = grid.nodes[grid.width-1][Math.floor(grid.height/2)]
 
     search = graph_search(
         start,
         end,
     )
-    console.log(search)
 }
 
 let paused = false
@@ -224,7 +223,6 @@ p.draw = () => {
         current = search.pop()
 
         if (search.converge()) {
-            console.log('Finished ', search)
             p.noLoop()
             converged = true
         }
@@ -256,6 +254,12 @@ p.draw = () => {
         p.noStroke()
         current = parent
     }
+
+    let pe = grid.get_coord(width, height, end)
+    let ps = grid.get_coord(width, height, start)
+    p.fill(173, 216, 230)
+    p.ellipse(pe.x, pe.y, grid.cell*0.75, grid.cell*0.75)
+    p.ellipse(ps.x, ps.y, grid.cell*0.75, grid.cell*0.75)
 }
 
 }}
