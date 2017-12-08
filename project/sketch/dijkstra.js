@@ -22,7 +22,9 @@ function Dijkstra(start, end) {
     }
 
     this.pop = () => {
-        this.current = this.open.dequeue()
+        while (this.current.closed) {
+            this.current = this.open.dequeue()
+        }
         this.current.close()
 
         return this.current
@@ -40,9 +42,7 @@ function Dijkstra(start, end) {
                 neighbor.f = g
                 neighbor.g = g
                 neighbor.parent = this.current
-                if (neighbor.opened == false) {
-                    this.open.queue(neighbor.open())
-                }
+                this.open.queue(neighbor.open())
             }
         }
     }

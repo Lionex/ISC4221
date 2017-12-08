@@ -22,7 +22,9 @@ function AStar(start, end) {
     }
 
     this.pop = () => {
-        this.current = this.open.dequeue()
+        while (this.current.closed) {
+            this.current = this.open.dequeue()
+        }
         this.current.close()
 
         return this.current
@@ -42,9 +44,7 @@ function AStar(start, end) {
                 neighbor.parent = this.current
                 neighbor.h = h
                 neighbor.f = 0.6*neighbor.g + h
-                if (neighbor.opened == false) {
-                    this.open.queue(neighbor.open())
-                }
+                this.open.queue(neighbor.open())
             }
         }
     }
