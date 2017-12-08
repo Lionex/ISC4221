@@ -4,6 +4,7 @@
 
 This repository hosts my files from labs, homework, class, and more.
 
+
 - **Part I** - Introduction to Algorithm Design and Analysis
 - **Part II** - Random Processes
 - **Part III** - Graph Theory
@@ -12,3 +13,7 @@ This repository hosts my files from labs, homework, class, and more.
 - **Part VI** - Feature Extraction and Pattern Recognition
 - **Part VII** - Computational Geometry
 
+Also included is my final project for my class which is a set of visualizations
+for graph search algorithms.
+
+![Show project visualizations](resources/project.gif)
