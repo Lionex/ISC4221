@@ -42,7 +42,7 @@
 % This is because at worst case we must backtrack through all $M$ previous
 % elements to find the base case for our recursion.  Dynamic programming
 % makes the problem solvable in polynomial time, taking at most
-% $25^2 = 125$ iterations for set $A$.
+% $25^2 = 625$ iterations for set $A$.
 
 % Inline if expression
 if_=@(pred,tf)tf{2-pred}();
