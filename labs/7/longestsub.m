@@ -30,49 +30,58 @@ function [l, n, L, its] = longestsub(A)
 if nargin < 1, error('not enough input arguments'); end
 if ~isvector(A), error('A must be a vector'); end
 
-% Inline if expression to use inside of anonymous functions
-if_=@(pred,tf)tf{2-pred}();
-
-% Grab the tail element, providing a default if the element doesn't exist
-final = @(X, e) if_(isempty(X), { @()e, @()X(end) });
-
-% Initialize recursive base value
+% Initialize recursive base values for first non-recursive call
 L(1,:) = {0, []};
 
-% Keep track of number of iterations required to solve the problem
-its = 0;
-for n=1:numel(A)
-    % Values for convinience
-    a = A(n); % current element
-    j = n+1; % index of next element
+[~,L, its] = recurse(A, L, 0);
 
-    % Rank subsets from longest to shortest by their length to get set of
-    % maximum elements, by sorting and then fliping to get descending order
-    % in terms of length
-    [~,I] = sort(cell2mat(L(:,1)));
-    I = flip(I);
-
-    % Search through valid subsets from largest to smallest to find the
-    % largest valid subset from the already discovered subsets using
-    % recursive relationship to prevent duplication of effort
-    for i=1:numel(I)
-        i = I(i);
-        if final(L{i,2}, 0) < a
-            % Increment length
-            len = L{i,1}+1;
-            L(j, :) = {len; [L{i,2} a]};
-            break;
-        end
-        its = its + 1;
-    end
-end
-
-% Process results to make them interpretable
+% Process results
 
 % Remove base recursive value
 L = L(2:end,:);
 [~,i] = max(cell2mat(L(:,1)));
 l = cell2mat(L(i,2));
 n = numel(l);
+
+end
+
+function [A, L, its] = recurse(A, L, its)
+
+if nargin < 3, error('bad recursive call'); end
+
+% Inline if expression to use inside of anonymous functions
+if_=@(pred,tf)tf{2-pred}();
+
+% Grab the tail element, providing a default if the element doesn't exist
+final = @(X, e) if_(isempty(X), { @()e, @()X(end) });
+
+% Values for convinience
+a = A(1); % current element
+
+% Rank subsets from longest to shortest by their length to get set of
+% maximum elements, by sorting and then fliping to get descending order
+% in terms of length
+[~,I] = sort(cell2mat(L(:,1)));
+I = flip(I);
+
+% Search through valid subsets from largest to smallest to find the
+% largest valid subset from the already discovered subsets using
+% recursive relationship to prevent duplication of effort
+for i=1:numel(I)
+    i = I(i);
+    if final(L{i,2}, 0) < a
+        % Increment length
+        len = L{i,1}+1;
+        L(end+1, :) = {len; [L{i,2} a]};
+        break;
+    end
+    its = its + 1;
+end
+% remove first element of A
+A = A(2:end);
+
+if numel(A) > 0
+    [A, L, its] = recurse(A, L, its);
+end
 
 end
