@@ -1,0 +1,283 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']],
+          extensions: ["TeX/AMSmath.js", "TeX/AMSsymbol.js"]
+      }
+    });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css" integrity="sha384-exe4Ak6B0EoJI0ogGxjJ8rn+RN3ftPnEQrGwX59KTCl5ybGzvHGKjhPKk/KC3abb" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.js" integrity="sha384-OMvkZ24ANLwviZR2lVq8ujbE/bUO8IR1FdBrKLQBI14Gq5Xp/lksIccGkmKL8m+h" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/assets/pseudocode/pseudocode.min.css">
+    <script src="/assets/pseudocode/pseudocode.min.js"></script>
+    <script language="javascript" type="text/javascript" src="bower_components/MathJax/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script language="javascript" type="text/javascript" src="bower_components/p5js/lib/p5.js"></script>
+    <!-- uncomment lines below to include extra p5 libraries -->
+    <!--<script language="javascript" src="bower_components/p5js/lib/addons/p5.dom.js"></script>-->
+    <!--<script language="javascript" src="bower_components/p5js/lib/addons/p5.sound.js"></script>-->
+    <script language="javascript" type="text/javascript" src="js/priority-queue.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/sketch.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/astar.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/dijkstra.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch/bfs.js"></script>
+    <script language="javascript" type="text/javascript" src="js/in-view.js"></script>
+    <script language="javascript" type="text/javascript" src="js/main.js"></script>
+</head>
+
+<body>
+    <main class="container">
+        <header class="title">
+            <h1 class="title__main">Visualizing Graph Search Methods</h1>
+            <h2 class="title__sub">ISC4221 Final Project, Gwen Lofman</h2>
+            <p class="title__summary">
+                Graph search algorithms form key parts of many procesess, and find wide use in many contexts.  For cases where we have little information about our goal, or no easy way to estimate future costs, Dijkstra's algorithm remains the best algorithm to use, at least when we do not consider parallel or concurrent graph search methods.  However, some methods use a heuristic to estimate future costs, and additionally prioritize the search using information about how much it is likely to cost to reach the goal from the current node.  The better the heuristic, the more focused the search becomes.
+            </p>
+        </header>
+        <article>
+            <figure class="figure section--figure">
+                <div class="figure-group">
+                    <figure class="figure figure--interactive" id="astar">
+                        <div id="sketch-astar" class="figure__sketch"></div>
+                        <figcaption class="figure__caption figure__caption--bottom">
+                            A* graph search.
+                        </figcaption>
+                    </figure>
+                    <figure class="figure figure--interactive" id="dijkstra">
+                        <div id="sketch-dijkstra" class="figure__sketch"></div>
+                        <figcaption class="figure__caption figure__caption--bottom">
+                            Dijkstra's algorithm.
+                        </figcaption>
+                    </figure>
+                    <figure class="figure figure--interactive" id="bfs">
+                        <div id="sketch-bfs" class="figure__sketch"></div>
+                        <figcaption class="figure__caption figure__caption--bottom">
+                            Breadth-first search.
+                        </figcaption>
+                    </figure>
+                </div>
+                <figcaption class="figure__caption figure__caption--bottom">
+                    <b>Figure 1.</b> The algorithm attempts to connect the two blue dots, avoiding the obstacles.  The blue line is the current optimal path from the start to the current node in the search.  Red nodes have had their neighbors evaluated.  Green nodes are neighbors that have been encountered and had costs evaluated, or have been otherwise queued for future search.  The algorithms depicted are 3 different methods for searching through a graph.  <i>Click to play, pause, and restart the visualizations.</i>
+                </figcaption>
+            </figure>
+            <section class="section">
+                <p>
+                    Graph search algorithms find a path from one node in the graph to another.  As graphs have more interconnections, become larger, and become more dense, searching through nodes to find paths becomes a more complicated and difficult task.  As we can gather more information about our world, and use it in our search algorithms, we find clever ways to cheat and improve the performance of graphs.  Here I will examine three algorithms which perform graph search, and discuss their properties.  In order of increasing complexity,
+                    <ul>
+                        <li>Breadth-First Search</li>
+                        <li>Dijkstra's Algorithm</li>
+                        <li>A* Graph Search</li>
+                    </ul>
+                </p>
+                <p>
+                    Generally, there are two classes of search algorithms: informed and uninformed.  Breadth-first and dijkstra's algorithm are uninformed, as they do not use information about the problem to estimate future costs, and use that information to speed up the search.  A* is an informed search method, which for problems where estimate of turue costs are possible, tends to perform the best of the three.
+                </p>
+            </section>
+            <section class="section">
+                <h2 class="section__title">Breadth-First Search</h2>
+                <p>
+                    Among the simpler graph search algorithms is Breadth-First Search: Breadth-first search does not prioritize nodes as it finds them, it simply adds them to a first-in-first-out queue.  In practice, this means the algorithm tends to process nodes in "levels" equidistant from the start in terms of the number of expansions, not in terms of the path distance to the current node.  Watch the algorithm visualization carefully to see the way breadth-first search sweeps level-by-level across the search space.
+                </p>
+                <figure class="figure figure--interactive" id="bfs">
+                    <div id="sketch-bfs-c" class="figure__sketch"></div>
+                    <figcaption class="figure__caption figure__caption--bottom">
+                        <b>Figure 2.</b> notice the sweeping behavior of breadth-first search.
+                    </figcaption>
+                </figure>
+                <p>
+                    What's more, the algorithm is relatively simple and only relies on parallelizable data structures, which opens up breadth-first search to parallel implementations.  However, we end up searching a lot of nodes we don't really need to search to find the optimal solution, and the basic algorithm doesn't necesarily find the optimial path unless it's been extended to keep track of costs as it traverses the graph like my implementation has.  However, with the adaptation of Breadth-First search to run on graphics processors, some probelms are best solved with parallel search methods extended from breadth-first search.
+                </p>
+                <figure id="bfs-algorithm" class="figure figure--inline figure--algorithm">
+                    <pre id="bfs-code" style="display: none;">
+                        \begin{algorithm}
+                        \caption{Breadth-First Search}
+                        \begin{algorithmic}
+                        \PROCEDURE{BFS}{$Graph, start, end$}
+                            \STATE $open := $\CALL{Queue}{}
+                            \STATE $closed := $\CALL{Set}{}
+                            \STATE $open.$\CALL{queue}{$start$}
+                            \STATE $parent. := $\CALL{Map}{}
+                            \WHILE {\NOT $open.$\CALL{isempty}{}}
+                                \STATE current $\gets$ open.\CALL{pop}{}
+                                \IF{current == end}
+                                    \RETURN \CALL{path}{$parent$}
+                                \ENDIF
+                                \FOR{$neighbor$ in $graph.$\CALL{neighbors}{$current$}}
+                                    \IF{$neighbor$ in $closed$}
+                                        \STATE continue
+                                    \ENDIF
+                                    \IF{$neighbor$ \NOT in $open$}
+                                        \STATE $open.$\CALL{queue}{$neighbor$}
+                                    \ENDIF
+                                    \STATE $parent[neighbor] = current$
+                                \ENDFOR
+                            \ENDWHILE
+                        \ENDPROCEDURE
+                        \end{algorithmic}
+                        \end{algorithm}
+                    </pre>
+                    <script>
+                        pseudocode.render(
+                            document.getElementById("bfs-code").textContent,
+                            document.getElementById("bfs-algorithm"),
+                            {lineNumber: true}
+                        )
+                    </script>
+                </figure>
+            </section>
+            <section class="section">
+                <h2 class="section__title">Dijkstra's Algorithm</h2>
+                <p>
+                    Next up in terms of increasing complexity is Dijkstra's algorithm: by using a priority queue instead of a simple first-in-first-out queue, we can prioritize nodes to search that have the minimum cost to reach from the start node.  We usually call this the <dfn>cost-to-come</dfn>, or <abbr title="cost to come">$g$</abbr>.  By following the lowest <abbr title="cost to come">$g$</abbr>, Dijkstra's algorithm always explores the minimum path from one node to another, and builds a tree which spans the graph, denoting the lowest cost from each node to the start node.  We can then reconstruct the path from our goal node back to the start by following this tree back.  The frontier for Dijkstra's algorithm, consequently, always processes nodes at the frontier which have similar costs.  In a uniform grid, the frontier looks circular at all times.
+                </p>
+                <figure class="figure figure--interactive" id="bfs">
+                    <div id="sketch-dijkstra-c" class="figure__sketch"></div>
+                    <figcaption class="figure__caption figure__caption--bottom">
+                        <b>Figure 3.</b> notice the shape of Dijkstra's frontier.
+                    </figcaption>
+                </figure>
+                <p>
+                    Following the path with the lowest cost is a nice trick, but it results in processing lots of nodes with equivablent cost that get us no closer to the solution.  To additionally prioritze information about future costs requires some way to evaluate what those costs could be.
+                </p>
+                <figure id="dijkstra-algorithm" class="figure figure--inline figure--algorithm">
+                    <pre id="dijkstra-code" style="display: none;">
+                        \begin{algorithm}
+                        \caption{Dijkstra's Algorithm}
+                        \begin{algorithmic}
+                        \PROCEDURE{Dijkstra}{$graph, start, end$}
+                        \STATE $open := $\CALL{PriorityQueue}{}  \COMMENT{prioritize by $g$}
+                        \STATE $closed := $\CALL{Set}{}
+                        \STATE $parent. := $\CALL{Map}{}
+                        \STATE $start.g \gets 0$
+                        \STATE $open.$\CALL{queue}{$start$}
+                        \WHILE {\NOT $open.$\CALL{isempty}{}}
+                            \STATE $current$ $\gets$ open.\CALL{pop}{}
+                            \IF{$current$ == end}
+                                \RETURN \CALL{path}{$parent$}
+                            \ENDIF
+                            \FOR{$neighbor$ in $graph.$\CALL{neighbors}{$current$}}
+                                \IF{$neighbor$ in $closed$}
+                                    \STATE continue
+                                \ENDIF
+                                \STATE $g \gets $\CALL{dist}{$current, neighbor$}$ + current.g$
+                                \IF{$neighbor.g > g$}
+                                    \STATE $neighbor.g \gets g$
+                                    \STATE $parent[neighbor] = current$
+                                    \IF{$neighbor$ \NOT in $open$}
+                                        \STATE $open.$\CALL{insert}{$neighbor$}
+                                    \ELSE
+                                        \STATE $open.$\CALL{increasePriority}{$neighbor$}
+                                    \ENDIF
+                                \ENDIF
+                            \ENDFOR
+                        \ENDWHILE
+                        \ENDPROCEDURE
+                        \end{algorithmic}
+                        \end{algorithm}
+                    </pre>
+                    <script>
+                        pseudocode.render(
+                            document.getElementById("dijkstra-code").textContent,
+                            document.getElementById("dijkstra-algorithm"),
+                            {lineNumber: true}
+                        )
+                    </script>
+                </figure>
+                <p>
+                    Because we use a priority queue in Dijkstra's algorithm, we cannot easily parallelize the search, as we never know where new nodes will end up being placed in the queue, and thus cannot reliably process groups of nodes simultaneously.
+                </p>
+            </section>
+            <section class="section">
+                <h2 class="section__title">A* Graph Search</h2>
+                <p>
+                    <abbr title="A Star graph search">A*</abbr> is an informed search method.  The <abbr title="star">*</abbr> means informed, or heuristic based.  In <abbr title="A star graph search">A*</abbr>, we prioritize based on the estimated <dfn>total path cost</dfn> <abbr title="total path cost">$f$</abbr>, which consists of the <abbr title="cost-to-come">$g$</abbr>, and the <dfn>heuristic</dfn>, or esimated future cost, <abbr title="heuristic">$h$</abbr>.  In other words, $f = g + h$.
+                </p>
+                <p>
+                    The performanc of <abbr title="A Star graph search">A*</abbr> depends almost entirely on the heuristic: the better the heuristic performs at estimate future costs from a particular node to the goal, the better <abbr title="A Star graph search">A*</abbr> will focus the search to explore only the nodes that best lead to the solution.  For a simple problem like the one shown in <b>Figure 4.</b> where our cost is in terms of distance, the heuristic is just the distance from the current node to the goal node.  <abbr title="A Star graph search">A*</abbr> in practice will take the most direct path first, and back-track when it hits obstacles, following the nodes which should lead to the lowest total path cost.
+                </p>
+                <figure class="figure figure--interactive" id="bfs">
+                    <div id="sketch-astar-c" class="figure__sketch"></div>
+                    <figcaption class="figure__caption figure__caption--bottom">
+                        <b>Figure 4.</b> notice how A* takes a direct path and then back-tracks when it hits an obstacle.
+                    </figcaption>
+                </figure>
+                <p>
+                    <abbr title="A Star graph search">A*</abbr> suffers from the same problems as Dijkstra's algorithms with regards to parallelization, but because it tends to search many fewer nodes than other uninformed search methods, it does not necessarily need to run parallel.  <abbr title="A Star graph search">A*</abbr> combines elements of greedy search and dijkstra's algorithm to create a very performant and efficient search.  In an unhindered environment, with a well understood heuristic, <abbr title="A Star graph search">A*</abbr> may even converge without expaining any nodes that are not in the solution.
+                </p>
+                <figure id="astar-algorithm" class="figure figure--inline figure--algorithm">
+                    <pre id="astar-code" style="display: none;">
+                        \begin{algorithm}
+                        \caption{A*}
+                        \begin{algorithmic}
+                        \PROCEDURE{AStar}{$graph, search, end$}
+                        \STATE $open := $\CALL{PriorityQueue}{} \COMMENT{prioritize by $f$}
+                        \STATE $closed := $\CALL{Set}{}
+                        \STATE $parent. := $\CALL{Map}{}
+                        \STATE $start.g \gets 0$
+                        \STATE $open.$\CALL{queue}{$start$}
+                        \WHILE {\NOT $open.$\CALL{isempty}{}}
+                            \STATE $current$ $\gets$ open.\CALL{pop}{}
+                            \IF{$current$ == end}
+                                \RETURN \CALL{path}{$parent$}
+                            \ENDIF
+                            \FOR{$neighbor$ in $graph.$\CALL{neighbors}{$current$}}
+                                \IF{$neighbor$ in $closed$}
+                                    \STATE continue
+                                \ENDIF
+                                \STATE $g \gets $\CALL{dist}{$current, neighbor$} + $current.g$
+                                \STATE $h \gets $\CALL{heuristic}{$neighbor,end$}
+                                \STATE $f \gets g + h$  \COMMENT{estimate of total cost}
+                                \IF{$neighbor.g > g$}
+                                    \STATE $neighbor.g \gets g$
+                                    \STATE $neighbor.h \gets h$
+                                    \STATE $neighbor.f \gets f$
+                                    \STATE $parent[neighbor] = current$
+                                    \IF{$neighbor$ \NOT in $open$}
+                                        \STATE $open.$\CALL{insert}{$neighbor$}
+                                    \ELSE
+                                        \STATE $open.$\CALL{increasePriority}{$neighbor$}
+                                    \ENDIF
+                                \ENDIF
+                            \ENDFOR
+                        \ENDWHILE
+                        \ENDPROCEDURE
+                        \end{algorithmic}
+                        \end{algorithm}
+                    </pre>
+                    <script>
+                        pseudocode.render(
+                            document.getElementById("astar-code").textContent,
+                            document.getElementById("astar-algorithm"),
+                            {lineNumber: true}
+                        )
+                    </script>
+                </figure>
+            </section>
+        </article>
+        <article class="container">
+            <section class="section">
+                <h2>Implementation</h2>
+                <p>
+                    These visualizations were implemented in <dfn><a href="https://p5js.org">p5.js</a></dfn>, a javascript visualization library designed to do visual programming.  p5.js is very easy to use.  Each visualization revolves around a grid layout, which, given a size and desired number of nodes in each direction, will render a square for each node in the grid.  The color depends on a set of flags which help determine the state of the node.  Each grid also has a set of obstacles: if a node is an obstacle, it isn't rendered at all.  From there, it's relatively simple to implement the graph search in the draw loop.  The p5 draw loop pushes the iterations of the algorithm, and thus each iteration of the algorithm is one frame in the p5.js visualization.
+                </p>
+                <p>
+                    The biggest challenge was factoring out reused code: much of the code remains exaclty the same between each visualization, so I needed a way to inject different search functionality for each visualization.  I was able to do this by creating a search interface which each search object needed to satisfy.
+                </p>
+                <p>
+                    Another challenge is performance: running six visualizations for relatively intensive algorithms simultaneously can be pretty punishing, even on modern hardware.  Thus, I had to implement an event to tell when a visualization was not in view.  When a visualization is invisible, it fires an "invisible" event, which then pauses the visualization.  Visibility is checked on scroll, so visualizations are paused when they aren't in view or when they are scrolled out of view.
+                </p>
+                <p>
+                    Running on the web, another interesting design challenge that appeared was responsiveness: the sizes and positions of all obstalces are caculated relative to the window size, so that on every screen size the visualizations make sense.  Rather than depending on an exact position for the obstalces and start and stop positions, they are all defined in terms of proportions.  Obstacles are not placed at position $(5,2)$, for example, but $(width\times\frac{3}{8},height\times\frac{1}{2})$.
+                </p>
+            </section>
+        </article>
+    </main>
+</body>
+
+</html>
