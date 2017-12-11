@@ -67,19 +67,32 @@
                 </figcaption>
             </figure>
             <section class="section">
-                <p>Graph search algorithms find a path from one node in the graph to another.  As graphs have more interconnections, become larger, and become more dense, searching through nodes to find paths becomes a more complicated and difficult task.  As we can gather more information about our world, and use it in our search algorithms, we find clever ways to cheat and improve the performance of graphs.  Here I will examine three algorithms which perform graph search, and discuss their properties.  In order of increasing complexity, <ul><li>Breadth-First Search</li><li>Dijkstra's Algorithm</li><li>A* Graph Search</li></ul></p>
+                <p>
+                    Graph search algorithms find a path from one node in the graph to another.  As graphs have more interconnections, become larger, and become more dense, searching through nodes to find paths becomes a more complicated and difficult task.  As we can gather more information about our world, and use it in our search algorithms, we find clever ways to cheat and improve the performance of graphs.  Here I will examine three algorithms which perform graph search, and discuss their properties.  In order of increasing complexity,
+                    <ul>
+                        <li>Breadth-First Search</li>
+                        <li>Dijkstra's Algorithm</li>
+                        <li>A* Graph Search</li>
+                    </ul>
+                </p>
+                <p>
+                    Generally, there are two classes of search algorithms: informed and uninformed.  Breadth-first and dijkstra's algorithm are uninformed, as they do not use information about the problem to estimate future costs, and use that information to speed up the search.  A* is an informed search method, which for problems where estimate of turue costs are possible, tends to perform the best of the three.
+                </p>
             </section>
             <section class="section">
                 <h2 class="section__title">Breadth-First Search</h2>
-                <p></p>
-                <p>Breadth-first search does not prioritize nodes as it finds them, it simply adds them to a first-in-first-out queue.  In practice, this means the algorithm tends to process nodes in "levels" equidistant from the start in terms of the number of expansions, not in terms of the path distance to the current node.  Watch the algorithm visualization carefully to see the way breadth-first search sweeps level-by-level across the search space.</p>
+                <p>
+                    Among the simpler graph search algorithms is Breadth-First Search: Breadth-first search does not prioritize nodes as it finds them, it simply adds them to a first-in-first-out queue.  In practice, this means the algorithm tends to process nodes in "levels" equidistant from the start in terms of the number of expansions, not in terms of the path distance to the current node.  Watch the algorithm visualization carefully to see the way breadth-first search sweeps level-by-level across the search space.
+                </p>
                 <figure class="figure figure--interactive" id="bfs">
                     <div id="sketch-bfs-c" class="figure__sketch"></div>
                     <figcaption class="figure__caption figure__caption--bottom">
                         <b>Figure 2.</b> notice the sweeping behavior of breadth-first search.
                     </figcaption>
                 </figure>
-                <p>What's more, the algorithm is relatively simple and only relies on parallelizable data structures, which opens up breadth-first search to parallel implementations.  However, we end up searching a lot of nodes we don't really need to search to find the optimal solution, and the basic algorithm doesn't necesarily find the optimial path unless it's been extended to keep track of costs as it traverses the graph like my implementation has.</p>
+                <p>
+                    What's more, the algorithm is relatively simple and only relies on parallelizable data structures, which opens up breadth-first search to parallel implementations.  However, we end up searching a lot of nodes we don't really need to search to find the optimal solution, and the basic algorithm doesn't necesarily find the optimial path unless it's been extended to keep track of costs as it traverses the graph like my implementation has.  However, with the adaptation of Breadth-First search to run on graphics processors, some probelms are best solved with parallel search methods extended from breadth-first search.
+                </p>
                 <figure id="bfs-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="bfs-code" style="display: none;">
                         \begin{algorithm}
@@ -120,12 +133,18 @@
             </section>
             <section class="section">
                 <h2 class="section__title">Dijkstra's Algorithm</h2>
+                <p>
+                    Next up in terms of increasing complexity is Dijkstra's algorithm: by using a priority queue instead of a simple first-in-first-out queue, we can prioritize nodes to search that have the minimum cost to reach from the start node.  We usually call this the <dfn>cost-to-come</dfn>, or <abbr title="cost to come">$g$</abbr>.  By following the lowest <abbr title="cost to come">$g$</abbr>, Dijkstra's algorithm always explores the minimum path from one node to another, and builds a tree which spans the graph, denoting the lowest cost from each node to the start node.  We can then reconstruct the path from our goal node back to the start by following this tree back.  The frontier for Dijkstra's algorithm, consequently, always processes nodes at the frontier which have similar costs.  In a uniform grid, the frontier looks circular at all times.
+                </p>
                 <figure class="figure figure--interactive" id="bfs">
                     <div id="sketch-dijkstra-c" class="figure__sketch"></div>
                     <figcaption class="figure__caption figure__caption--bottom">
                         <b>Figure 3.</b> notice the shape of Dijkstra's frontier.
                     </figcaption>
                 </figure>
+                <p>
+                    Following the path with the lowest cost is a nice trick, but it results in processing lots of nodes with equivablent cost that get us no closer to the solution.  To additionally prioritze information about future costs requires some way to evaluate what those costs could be.
+                </p>
                 <figure id="dijkstra-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="dijkstra-code" style="display: none;">
                         \begin{algorithm}
@@ -170,15 +189,27 @@
                         )
                     </script>
                 </figure>
+                <p>
+                    Because we use a priority queue in Dijkstra's algorithm, we cannot easily parallelize the search, as we never know where new nodes will end up being placed in the queue, and thus cannot reliably process groups of nodes simultaneously.
+                </p>
             </section>
             <section class="section">
                 <h2 class="section__title">A* Graph Search</h2>
+                <p>
+                    <abbr title="A Star graph search">A*</abbr> is an informed search method.  The <abbr title="star">*</abbr> means informed, or heuristic based.  In <abbr title="A star graph search">A*</abbr>, we prioritize based on the estimated <dfn>total path cost</dfn> <abbr title="total path cost">$f$</abbr>, which consists of the <abbr title="cost-to-come">$g$</abbr>, and the <dfn>heuristic</dfn>, or esimated future cost, <abbr title="heuristic">$h$</abbr>.  In other words, $f = g + h$.
+                </p>
+                <p>
+                    The performanc of <abbr title="A Star graph search">A*</abbr> depends almost entirely on the heuristic: the better the heuristic performs at estimate future costs from a particular node to the goal, the better <abbr title="A Star graph search">A*</abbr> will focus the search to explore only the nodes that best lead to the solution.  For a simple problem like the one shown in <b>Figure 4.</b> where our cost is in terms of distance, the heuristic is just the distance from the current node to the goal node.  <abbr title="A Star graph search">A*</abbr> in practice will take the most direct path first, and back-track when it hits obstacles, following the nodes which should lead to the lowest total path cost.
+                </p>
                 <figure class="figure figure--interactive" id="bfs">
                     <div id="sketch-astar-c" class="figure__sketch"></div>
                     <figcaption class="figure__caption figure__caption--bottom">
                         <b>Figure 4.</b> notice how A* takes a direct path and then back-tracks when it hits an obstacle.
                     </figcaption>
                 </figure>
+                <p>
+                    <abbr title="A Star graph search">A*</abbr> suffers from the same problems as Dijkstra's algorithms with regards to parallelization, but because it tends to search many fewer nodes than other uninformed search methods, it does not necessarily need to run parallel.  <abbr title="A Star graph search">A*</abbr> combines elements of greedy search and dijkstra's algorithm to create a very performant and efficient search.  In an unhindered environment, with a well understood heuristic, <abbr title="A Star graph search">A*</abbr> may even converge without expaining any nodes that are not in the solution.
+                </p>
                 <figure id="astar-algorithm" class="figure figure--inline figure--algorithm">
                     <pre id="astar-code" style="display: none;">
                         \begin{algorithm}
@@ -227,6 +258,23 @@
                         )
                     </script>
                 </figure>
+            </section>
+        </article>
+        <article class="container">
+            <section class="section">
+                <h2>Implementation</h2>
+                <p>
+                    These visualizations were implemented in <dfn><a href="https://p5js.org">p5.js</a></dfn>, a javascript visualization library designed to do visual programming.  p5.js is very easy to use.  Each visualization revolves around a grid layout, which, given a size and desired number of nodes in each direction, will render a square for each node in the grid.  The color depends on a set of flags which help determine the state of the node.  Each grid also has a set of obstacles: if a node is an obstacle, it isn't rendered at all.  From there, it's relatively simple to implement the graph search in the draw loop.  The p5 draw loop pushes the iterations of the algorithm, and thus each iteration of the algorithm is one frame in the p5.js visualization.
+                </p>
+                <p>
+                    The biggest challenge was factoring out reused code: much of the code remains exaclty the same between each visualization, so I needed a way to inject different search functionality for each visualization.  I was able to do this by creating a search interface which each search object needed to satisfy.
+                </p>
+                <p>
+                    Another challenge is performance: running six visualizations for relatively intensive algorithms simultaneously can be pretty punishing, even on modern hardware.  Thus, I had to implement an event to tell when a visualization was not in view.  When a visualization is invisible, it fires an "invisible" event, which then pauses the visualization.  Visibility is checked on scroll, so visualizations are paused when they aren't in view or when they are scrolled out of view.
+                </p>
+                <p>
+                    Running on the web, another interesting design challenge that appeared was responsiveness: the sizes and positions of all obstalces are caculated relative to the window size, so that on every screen size the visualizations make sense.  Rather than depending on an exact position for the obstalces and start and stop positions, they are all defined in terms of proportions.  Obstacles are not placed at position $(5,2)$, for example, but $(width\times\frac{3}{8},height\times\frac{1}{2})$.
+                </p>
             </section>
         </article>
     </main>
