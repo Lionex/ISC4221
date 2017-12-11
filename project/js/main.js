@@ -19,8 +19,8 @@ const sketches = [
             u_start,
             u_end,
             (grid) => [],
-            window.innerWidth/3,
-            window.innerWidth/3,
+            window.innerWidth > 900 ? Math.min(width * 2, 350) : width,
+            window.innerWidth > 900 ? Math.min(width * 2, 350) : width,
             (w, h) => new BFS(w,h)
         ),
         id: 'sketch-bfs-c'
@@ -41,8 +41,8 @@ const sketches = [
             u_start,
             u_end,
             (grid) => [],
-            window.innerWidth/3,
-            window.innerWidth/3,
+            window.innerWidth > 900 ? Math.min(width * 2, 350) : width,
+            window.innerWidth > 900 ? Math.min(width * 2, 350) : width,
             (w, h) => new Dijkstra(w,h)
         ),
         id: 'sketch-dijkstra-c'
@@ -63,8 +63,8 @@ const sketches = [
             u_start,
             u_end,
             i_obs,
-            window.innerWidth/3,
-            window.innerWidth/3,
+            window.innerWidth > 900 ? Math.min(width * 2, 350) : width,
+            window.innerWidth > 900 ? Math.min(width * 2, 350) : width,
             (w, h) => new AStar(w,h)
         ),
         id: 'sketch-astar-c'
