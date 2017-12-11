@@ -49,6 +49,7 @@ P_N = P(6*N(:,1)+N(:,2)-6);
 
 % Probability distribution for each sum
 P_N = arrayfun(@(s)sum(P_N(n == s)),2:12)';
+C_N = arrayfun(@(i)sum(P_N(1:i)),1:numel(P_N));
 
 % Ensure total probability sums to one
 if abs(sum(P_N) - 1) > 0.001, error('total %g is not 1', sum(P_N)); end
@@ -62,8 +63,7 @@ ylabel('probability');
 %%
 % $$
 % \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
-% 2    &
-3 & 4    & 5    & 6    & 7    & 8    & 9   & 10   & 11   & 12 \\
+% 2    & 3 & 4    & 5    & 6    & 7    & 8    & 9   & 10   & 11   & 12 \\
 % \hline
 % 0.01 & 0 & 0.02 & 0.04 & 0.09 & 0.08 & 0.12 & 0.2 & 0.24 & 0.16 & 0.04 \\
 % \end{tabular}
