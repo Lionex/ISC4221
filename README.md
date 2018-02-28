@@ -13,7 +13,6 @@ This repository hosts my files from labs, homework, class, and more.
 - **Part VI** - Feature Extraction and Pattern Recognition
 - **Part VII** - Computational Geometry
 
-Also included is my final project for my class which is a set of visualizations
-for graph search algorithms.
+Also included is my final project for my class which is a set of [visualization](https://glfmn.github.io/ISC4221/) for graph search algorithms.
 
-![Show project visualizations](resources/project.gif)
+[![Show project visualizations](resources/project.gif)](https://glfmn.github.io/ISC4221/)
